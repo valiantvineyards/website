@@ -1,0 +1,38 @@
+---
+/**
+ * Astro Button component
+ * A wrapper around the buttonVariants for use in .astro files
+ * For interactive buttons in Svelte components, use the Svelte Button from $lib/components/ui/button
+ */
+import { buttonVariants } from "$lib/components/ui/button";
+import type { HTMLAttributes } from "astro/types";
+
+type BaseProps = {
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "gold" | "gold-outline" | "gold-outline-dark" | "white";
+  size?: "default" | "sm" | "lg" | "icon";
+};
+
+type AnchorProps = BaseProps & Omit<HTMLAttributes<"a">, keyof BaseProps> & {
+  href: string;
+};
+
+type ButtonElementProps = BaseProps & Omit<HTMLAttributes<"button">, keyof BaseProps> & {
+  href?: never;
+};
+
+type Props = AnchorProps | ButtonElementProps;
+
+const { variant = "default", size = "default", href, class: className, ...rest } = Astro.props;
+
+const classes = buttonVariants({ variant, size }) + (className ? ` ${className}` : "");
+---
+
+{href ? (
+  <a href={href} class={classes} {...rest as Omit<AnchorProps, keyof BaseProps | "href">}>
+    <slot />
+  </a>
+) : (
+  <button class={classes} {...rest as Omit<ButtonElementProps, keyof BaseProps>}>
+    <slot />
+  </button>
+)}

@@ -1,0 +1,392 @@
+---
+interface NavItem {
+  name: string;
+  href?: string;
+  items?: { name: string; href: string }[];
+}
+
+interface Props {
+  navigation: NavItem[];
+  currentPath: string;
+}
+
+const { navigation, currentPath } = Astro.props;
+---
+
+<!-- Toggle Button - 2-bar with MENU text, animates to X -->
+<button
+  id="mobile-nav-toggle"
+  class="flex flex-col items-center justify-center gap-1 p-3 text-white/70 transition-colors hover:text-white motion-reduce:transition-none touch-manipulation"
+  aria-label="Open menu"
+  aria-expanded="false"
+  aria-controls="mobile-nav-panel"
+>
+  <div class="flex flex-col items-center justify-center gap-1.5">
+    <span
+      class="mobile-nav-bar block h-0.5 w-8 bg-current transition-transform duration-300 ease-out origin-center will-change-transform backface-hidden motion-reduce:transition-none"
+    ></span>
+    <span
+      class="mobile-nav-bar block h-0.5 w-8 bg-current transition-transform duration-300 ease-out origin-center will-change-transform backface-hidden motion-reduce:transition-none"
+    ></span>
+  </div>
+  <span
+    class="mobile-nav-label font-sans text-xs uppercase tracking-widest text-gold-light transition-all duration-200 motion-reduce:transition-none"
+    aria-hidden="true"
+  >MENU</span>
+</button>
+
+<!-- Backdrop overlay -->
+<div
+  id="mobile-nav-backdrop"
+  class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200 motion-reduce:transition-none"
+  aria-hidden="true"
+></div>
+
+<!-- Dropdown panel -->
+<div
+  id="mobile-nav-panel"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Navigation menu"
+  class="fixed left-0 right-0 z-50 max-h-[80vh] overflow-y-auto bg-neutral-900 shadow-2xl invisible"
+>
+  <nav class="px-4 py-4" aria-label="Mobile navigation">
+    <ul class="space-y-1">
+      {navigation.map((item) => (
+        item.items ? (
+          <li>
+            <details class="group mobile-nav-details">
+              <summary
+                class="flex w-full cursor-pointer select-none items-center justify-between rounded-md px-3 py-3 font-serif text-2xl font-semibold text-white transition-colors hover:bg-white/10 hover:text-gold-light list-none [&::-webkit-details-marker]:hidden"
+              >
+                {item.name}
+                <svg
+                  class="mobile-nav-arrow h-5 w-5 text-gold-light transition-transform duration-100 motion-reduce:transition-none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                </svg>
+              </summary>
+              <div class="mobile-nav-submenu-wrapper">
+                <ul class="mobile-nav-submenu ml-4 mt-1 space-y-1 border-l-2 border-gold/30 pl-4">
+                  {item.items.map((subItem) => (
+                    <li>
+                      <a
+                        href={subItem.href}
+                        class:list={[
+                          "mobile-nav-link block rounded-md px-3 py-2.5 font-serif text-2xl transition-colors",
+                          currentPath === subItem.href ? "text-gold-light font-semibold" : "text-white/90 hover:text-gold-light"
+                        ]}
+                        aria-current={currentPath === subItem.href ? "page" : undefined}
+                      >
+                        {subItem.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </details>
+          </li>
+        ) : (
+          <li>
+            <a
+              href={item.href}
+              class:list={[
+                "mobile-nav-link block rounded-md px-3 py-3 font-serif text-2xl font-semibold transition-colors",
+                currentPath === item.href ? "text-gold-light" : "text-white hover:bg-white/10 hover:text-gold-light"
+              ]}
+              aria-current={currentPath === item.href ? "page" : undefined}
+            >
+              {item.name}
+            </a>
+          </li>
+        )
+      ))}
+    </ul>
+  </nav>
+</div>
+
+<style>
+  /* Hide all focus rings on touch devices (coarse pointer = finger/touch) */
+  @media (pointer: coarse) {
+    #mobile-nav-panel a:focus,
+    #mobile-nav-panel a:focus-visible,
+    #mobile-nav-panel summary:focus,
+    #mobile-nav-panel summary:focus-visible,
+    #mobile-nav-panel button:focus,
+    #mobile-nav-panel button:focus-visible {
+      outline: none !important;
+    }
+  }
+
+  /* On non-touch devices, show focus ring only for keyboard navigation */
+  @media (pointer: fine) {
+    #mobile-nav-panel a:focus,
+    #mobile-nav-panel summary:focus,
+    #mobile-nav-panel button:focus {
+      outline: none;
+    }
+
+    #mobile-nav-panel a:focus-visible,
+    #mobile-nav-panel summary:focus-visible,
+    #mobile-nav-panel button:focus-visible {
+      outline: 2px solid var(--color-gold, #d4af37);
+      outline-offset: 2px;
+    }
+  }
+
+  /* Hamburger to X animation */
+  #mobile-nav-toggle[aria-expanded="true"] .mobile-nav-bar:first-child {
+    transform: translateY(4px) rotate(45deg);
+  }
+
+  #mobile-nav-toggle[aria-expanded="true"] .mobile-nav-bar:last-child {
+    transform: translateY(-4px) rotate(-45deg);
+  }
+
+  #mobile-nav-toggle[aria-expanded="true"] .mobile-nav-label {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  /* Panel default state (closing) */
+  #mobile-nav-panel {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+    transition: clip-path 150ms ease-out, opacity 150ms ease-out, visibility 0s 150ms;
+  }
+
+  /* Panel open state */
+  #mobile-nav-panel.open {
+    visibility: visible;
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transition: clip-path 180ms ease-out, opacity 180ms ease-out, visibility 0s 0s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #mobile-nav-panel {
+      transition: none;
+    }
+    #mobile-nav-panel.open {
+      transition: none;
+    }
+  }
+
+  /* Backdrop open state */
+  #mobile-nav-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Animated submenu using grid technique */
+  .mobile-nav-submenu-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 100ms ease-out;
+  }
+
+  .mobile-nav-submenu {
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-nav-submenu-wrapper {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.getElementById('mobile-nav-toggle');
+  const panel = document.getElementById('mobile-nav-panel');
+  const backdrop = document.getElementById('mobile-nav-backdrop');
+  const header = document.getElementById('main-header');
+
+  if (toggle && panel && backdrop) {
+    let isOpen = false;
+
+    // Store references after null check for TypeScript
+    const toggleEl = toggle;
+    const panelEl = panel;
+    const backdropEl = backdrop;
+
+    function getHeaderHeight() {
+      return header?.offsetHeight ?? 65;
+    }
+
+    let openedViaKeyboard = false;
+
+    function openMenu() {
+      isOpen = true;
+      const headerHeight = getHeaderHeight();
+
+      // Position panel and backdrop below header
+      panelEl.style.top = `${headerHeight}px`;
+      backdropEl.style.top = `${headerHeight}px`;
+
+      toggleEl.setAttribute('aria-expanded', 'true');
+      toggleEl.setAttribute('aria-label', 'Close menu');
+      panelEl.classList.add('open');
+      backdropEl.classList.add('open');
+
+      // Focus first link only for keyboard users
+      if (openedViaKeyboard) {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const delay = prefersReducedMotion ? 0 : 250;
+        setTimeout(() => {
+          const firstLink = panelEl.querySelector('a, button, summary');
+          if (firstLink instanceof HTMLElement) {
+            firstLink.focus({ preventScroll: true });
+          }
+        }, delay);
+      }
+      openedViaKeyboard = false;
+    }
+
+    function closeMenu() {
+      isOpen = false;
+
+      // Collapse all open details elements and reset arrows before closing
+      panelEl.querySelectorAll('details[open]').forEach((details) => {
+        details.removeAttribute('open');
+        const arrow = details.querySelector('.mobile-nav-arrow');
+        const wrapper = details.querySelector('.mobile-nav-submenu-wrapper') as HTMLElement;
+        arrow?.classList.remove('rotate-180');
+        if (wrapper) wrapper.style.gridTemplateRows = '0fr';
+      });
+
+      // Lock header position during close to prevent flash
+      if (header) {
+        header.style.transform = 'translateY(0)';
+        header.classList.remove('-translate-y-full');
+      }
+
+      toggleEl.setAttribute('aria-expanded', 'false');
+      toggleEl.setAttribute('aria-label', 'Open menu');
+      panelEl.classList.remove('open');
+      backdropEl.classList.remove('open');
+
+      // Restore header scroll behavior after transition
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const delay = prefersReducedMotion ? 0 : 150;
+      setTimeout(() => {
+        if (header) {
+          header.style.transform = '';
+        }
+      }, delay);
+    }
+
+    // Reset menu state without animation (for bfcache restore)
+    function resetMenuState() {
+      isOpen = false;
+
+      // Collapse all open details elements
+      panelEl.querySelectorAll('details[open]').forEach((details) => {
+        details.removeAttribute('open');
+        const arrow = details.querySelector('.mobile-nav-arrow');
+        const wrapper = details.querySelector('.mobile-nav-submenu-wrapper') as HTMLElement;
+        arrow?.classList.remove('rotate-180');
+        if (wrapper) wrapper.style.gridTemplateRows = '0fr';
+      });
+
+      // Temporarily disable transitions on nav bars and label
+      const bars = toggleEl.querySelectorAll('.mobile-nav-bar');
+      const label = toggleEl.querySelector('.mobile-nav-label');
+      bars.forEach(bar => (bar as HTMLElement).style.transition = 'none');
+      if (label) (label as HTMLElement).style.transition = 'none';
+
+      // Reset state
+      toggleEl.setAttribute('aria-expanded', 'false');
+      toggleEl.setAttribute('aria-label', 'Open menu');
+      panelEl.classList.remove('open');
+      backdropEl.classList.remove('open');
+
+      // Re-enable transitions after DOM update
+      requestAnimationFrame(() => {
+        bars.forEach(bar => (bar as HTMLElement).style.transition = '');
+        if (label) (label as HTMLElement).style.transition = '';
+      });
+    }
+
+    function toggleMenu() {
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    }
+
+    // Toggle button click
+    toggleEl.addEventListener('click', toggleMenu);
+
+    // Track keyboard activation for focus management
+    toggleEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        openedViaKeyboard = true;
+      }
+    });
+
+    // Backdrop click closes menu
+    backdropEl.addEventListener('click', closeMenu);
+
+    // Escape key closes menu
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        closeMenu();
+        toggleEl.focus();
+      }
+    });
+
+    // Reset menu state on back/forward navigation (bfcache restore)
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) {
+        resetMenuState();
+      }
+    });
+
+    // Close menu when viewport crosses to desktop breakpoint
+    const lgBreakpoint = window.matchMedia('(min-width: 1024px)');
+    lgBreakpoint.addEventListener('change', (event) => {
+      if (event.matches && isOpen) {
+        closeMenu();
+      }
+    });
+
+    // Handle submenu toggle with JS to ensure animation works in Chrome
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    panelEl.querySelectorAll('.mobile-nav-details').forEach((details) => {
+      const summary = details.querySelector('summary');
+      const wrapper = details.querySelector('.mobile-nav-submenu-wrapper') as HTMLElement;
+      const arrow = details.querySelector('.mobile-nav-arrow') as SVGElement;
+
+      if (!summary || !wrapper) return;
+
+      summary.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        if (details.hasAttribute('open')) {
+          // Closing: animate arrow and submenu together, then remove open attribute
+          arrow?.classList.remove('rotate-180');
+          wrapper.style.gridTemplateRows = '0fr';
+          const delay = prefersReducedMotion ? 0 : 100;
+          setTimeout(() => {
+            details.removeAttribute('open');
+          }, delay);
+        } else {
+          // Opening: add open attribute, then trigger animation on next frame
+          details.setAttribute('open', '');
+          requestAnimationFrame(() => {
+            arrow?.classList.add('rotate-180');
+            wrapper.style.gridTemplateRows = '1fr';
+          });
+        }
+      });
+    });
+
+  }
+</script>

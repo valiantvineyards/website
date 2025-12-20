@@ -1,0 +1,84 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Button from "../../components/Button.astro";
+import { Image } from "astro:assets";
+import cocktailImage from "../../assets/images/cocktail-sd-gold-rush.jpg";
+---
+
+<BaseLayout title="South Dakota Gold Rush Cocktail" description="A refreshing bourbon cocktail made with Clay Turner Bourbon, South Dakota honey, and fresh lemon juice.">
+  <section class="py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-2xl">
+        <div class="mb-8 overflow-hidden">
+          <Image
+            src={cocktailImage}
+            alt="South Dakota Gold Rush cocktail in crystal glasses with orange garnish"
+            widths={[400, 600, 800]}
+            sizes="(max-width: 672px) 100vw, 672px"
+            quality={80}
+            class="w-full h-auto"
+          />
+        </div>
+        <p class="text-gold font-semibold tracking-widest uppercase mb-3">Cocktail Recipe</p>
+        <h1 class="font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl mb-6">
+          South Dakota Gold Rush
+        </h1>
+        <p class="text-lg text-muted-foreground mb-10">
+          A refreshing twist on the classic Gold Rush cocktail, featuring our Clay Turner Bourbon and locally-sourced South Dakota honey.
+        </p>
+
+        <div class="bg-neutral-50 rounded-lg p-8 mb-10">
+          <h2 class="font-serif text-2xl font-semibold text-foreground mb-6">Ingredients</h2>
+          <ul class="space-y-3 text-foreground">
+            <li class="flex items-start gap-3">
+              <span class="text-gold font-semibold">2 oz</span>
+              <span>Clay Turner Bourbon</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-gold font-semibold">¾ oz</span>
+              <span>South Dakota honey syrup*</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-gold font-semibold">¾ oz</span>
+              <span>Fresh lemon juice</span>
+            </li>
+          </ul>
+          <p class="mt-6 text-sm text-muted-foreground italic">
+            *Honey syrup: Dissolve ½ cup honey into ¼ cup hot water. Let cool before using.
+          </p>
+        </div>
+
+        <div class="mb-10">
+          <h2 class="font-serif text-2xl font-semibold text-foreground mb-6">Instructions</h2>
+          <ol class="space-y-4 text-foreground">
+            <li class="flex gap-4">
+              <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gold text-white flex items-center justify-center font-semibold">1</span>
+              <span class="pt-1">Combine all ingredients in a cocktail shaker with ice.</span>
+            </li>
+            <li class="flex gap-4">
+              <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gold text-white flex items-center justify-center font-semibold">2</span>
+              <span class="pt-1">Shake vigorously until well chilled.</span>
+            </li>
+            <li class="flex gap-4">
+              <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gold text-white flex items-center justify-center font-semibold">3</span>
+              <span class="pt-1">Strain into a whiskey glass.</span>
+            </li>
+            <li class="flex gap-4">
+              <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gold text-white flex items-center justify-center font-semibold">4</span>
+              <span class="pt-1">Garnish with a lemon wheel.</span>
+            </li>
+          </ol>
+        </div>
+
+        <div class="border-t border-neutral-200 pt-8">
+          <p class="text-sm text-muted-foreground mb-6">
+            Made with Clay Turner Bourbon, crafted at Stone Faces Distillery in Vermillion, South Dakota.
+          </p>
+          <Button href="/distillery" variant="gold-outline">
+            Explore Our Spirits
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

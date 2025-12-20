@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/Button.astro";
+---
+
+<BaseLayout title="Message Sent" description="Thank you for contacting Valiant Vineyards.">
+  <section class="py-24 lg:py-32">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <div class="mb-8">
+          <svg
+            class="mx-auto h-16 w-16 text-gold"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </div>
+
+        <h1 class="font-serif text-4xl font-semibold tracking-tight sm:text-5xl">
+          Thank You!
+        </h1>
+
+        <p class="mt-6 text-lg text-muted-foreground">
+          Your message has been sent. We'll get back to you as soon as possible.
+        </p>
+
+        <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <Button href="/" variant="gold" size="lg">
+            Back to Home
+          </Button>
+          <Button href="/tasting-room/" variant="gold-outline" size="lg">
+            Plan Your Visit
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

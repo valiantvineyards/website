@@ -1,0 +1,137 @@
+---
+import "../styles/global.css";
+import logo from "../assets/logos/logo-dark.svg";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Sign up for the Valiant Vineyards newsletter" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png" />
+    <link rel="shortcut icon" href="/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
+    <title>Newsletter Sign Up | Valiant Vineyards</title>
+  </head>
+  <body class="min-h-screen flex flex-col bg-secondary text-secondary-foreground">
+    <main class="flex-1 flex items-center justify-center p-6">
+      <div class="w-full max-w-md text-center">
+        <img src={logo.src} alt="Valiant Vineyards" width="200" height="96" class="mx-auto mb-8 h-24 opacity-80" />
+
+        <h1 class="font-serif text-2xl font-semibold text-gold mb-3">
+          Stay Connected
+        </h1>
+        <p class="text-secondary-foreground/70 mb-8">
+          Sign up to receive news, offers, and updates from Valiant Vineyards.
+        </p>
+
+        <form
+          id="signup-form"
+          action="/api/subscribe"
+          method="POST"
+          class="space-y-4"
+        >
+          <label for="signup-email" class="sr-only">Email address</label>
+          <input
+            id="signup-email"
+            type="email"
+            name="EMAIL"
+            placeholder="Enter your email address"
+            required
+            aria-required="true"
+            autocomplete="email"
+            class="w-full rounded-lg border border-secondary-foreground/20 bg-secondary-foreground/5 px-5 py-4 text-lg text-secondary-foreground placeholder:text-secondary-foreground/50 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+          />
+          <button
+            type="submit"
+            class="w-full rounded-lg bg-gold px-6 py-4 text-lg font-semibold text-white transition-colors hover:bg-gold-light active:bg-gold-light"
+          >
+            Subscribe
+          </button>
+        </form>
+
+        <div id="message" class="mt-6 hidden" aria-live="polite" aria-atomic="true">
+          <p id="message-text" class="text-lg"></p>
+        </div>
+      </div>
+    </main>
+
+    <footer class="py-4 text-center">
+      <p class="text-xs text-secondary-foreground/50">
+        &copy; {new Date().getFullYear()} Valiant Vineyards Winery & Distillery
+      </p>
+    </footer>
+  </body>
+</html>
+
+<script>
+  const form = document.getElementById('signup-form') as HTMLFormElement;
+  const messageContainer = document.getElementById('message') as HTMLElement;
+  const messageText = document.getElementById('message-text') as HTMLElement;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const emailInput = form.querySelector('input[name="EMAIL"]') as HTMLInputElement;
+    const email = emailInput.value;
+    const button = form.querySelector('button') as HTMLButtonElement;
+    const originalText = button.textContent;
+
+    // Disable button during submission
+    button.disabled = true;
+    button.textContent = 'Subscribing...';
+
+    try {
+      const formData = new FormData();
+      formData.append('email', email);
+
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      // Show message
+      messageContainer.classList.remove('hidden');
+      messageText.classList.remove('text-green-400', 'text-red-400');
+
+      if (result.success) {
+        messageText.classList.add('text-green-400');
+        messageText.textContent = 'Thank you for subscribing!';
+        form.reset();
+
+        // Auto-reset page after 3 seconds for next person
+        setTimeout(() => {
+          messageContainer.classList.add('hidden');
+          emailInput.focus();
+        }, 3000);
+      } else {
+        messageText.classList.add('text-red-400');
+        messageText.textContent = result.error || 'Something went wrong. Please try again.';
+
+        // Auto-hide error after 4 seconds
+        setTimeout(() => {
+          messageContainer.classList.add('hidden');
+        }, 4000);
+      }
+    } catch (error) {
+      messageContainer.classList.remove('hidden');
+      messageText.classList.remove('text-green-400', 'text-red-400');
+      messageText.classList.add('text-red-400');
+      messageText.textContent = 'Something went wrong. Please try again.';
+
+      setTimeout(() => {
+        messageContainer.classList.add('hidden');
+      }, 4000);
+    }
+
+    // Re-enable button
+    button.disabled = false;
+    button.textContent = originalText;
+  });
+</script>

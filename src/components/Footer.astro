@@ -1,0 +1,264 @@
+---
+import logoDark from "../assets/logos/logo-dark.svg";
+import { social, contact, address } from "../data/site-info";
+
+const currentYear = new Date().getFullYear();
+
+const footerLinks = {
+  visitEvents: [
+    { name: "Tasting Room", href: "/tasting-room/" },
+    { name: "Bed & Breakfast", href: "/bed-and-breakfast/" },
+    { name: "Private Events", href: "/private-events/" },
+    { name: "Weddings", href: "/weddings/" },
+  ],
+  wineSpirits: [
+    { name: "Wines", href: "/wines/" },
+    { name: "Distillery", href: "/distillery/" },
+  ],
+  about: [
+    { name: "Our Story", href: "/about/" },
+    { name: "Our Team", href: "/our-team/" },
+    { name: "Events", href: "/events/" },
+    { name: "Contact", href: "/contact/" },
+  ],
+  legal: [
+    { name: "Privacy Policy", href: "/privacy-policy/" },
+    { name: "Cookie Policy", href: "/cookie-policy/" },
+    { name: "Terms of Service", href: "/terms-of-service/" },
+    { name: "Accessibility", href: "/accessibility/" },
+  ],
+  resources: [
+    { name: "Shareholders", href: "https://valiantvineyardsinc-my.sharepoint.com/:f:/g/personal/sherry_valiantvineyards_us/EkDHsWqcSPBHoZDQ7X93J0MBu2uIZEnpDMqnfievGcNOIw?e=Uauahg", external: true },
+    { name: "Tasting Room Sign Up", href: "/tasting-room-sign-up/" },
+  ],
+};
+---
+
+<footer class="border-t border-secondary-foreground/10 bg-secondary text-secondary-foreground">
+  <div class="mx-auto max-w-7xl px-4 py-12 lg:px-8">
+    <!-- Newsletter Signup -->
+    <div class="mb-12 border-b border-secondary-foreground/10 pb-12">
+      <div class="flex flex-col gap-6 text-center md:flex-row md:items-center md:gap-12 md:justify-between md:text-left">
+        <div class="md:max-w-xl">
+          <div class="mb-2 flex items-center justify-center gap-2 md:justify-start">
+            <svg class="h-5 w-5 text-gold-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+            </svg>
+            <h3 class="font-serif text-xl font-semibold text-gold-light">Stay Connected</h3>
+          </div>
+          <p class="text-sm text-secondary-foreground/70">
+            Stay up to date on the latest offers, products, and news at Valiant Winery & Distillery.
+          </p>
+        </div>
+        <div class="w-full md:w-auto">
+          <form
+            id="newsletter-form"
+            action="/api/subscribe"
+            method="POST"
+            class="flex flex-col gap-3 sm:flex-row"
+          >
+            <label for="footer-newsletter-email" class="sr-only">Email address for newsletter</label>
+            <input
+              id="footer-newsletter-email"
+              type="email"
+              name="EMAIL"
+              placeholder="Enter your email"
+              required
+              aria-required="true"
+              autocomplete="email"
+              class="flex-1 rounded-md border border-secondary-foreground/20 bg-secondary-foreground/5 px-4 py-3 text-base sm:text-sm text-secondary-foreground placeholder:text-secondary-foreground/50 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20 sm:min-w-64 lg:min-w-80"
+            />
+            <button
+              type="submit"
+              class="rounded-md bg-gold px-6 py-3 text-sm font-medium text-white shadow transition-colors hover:bg-gold-dark"
+            >
+              Subscribe
+            </button>
+          </form>
+          <p id="newsletter-message" class="mt-4 text-sm hidden wrap-break-word" aria-live="polite" aria-atomic="true"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-5">
+      <!-- Visit & Events -->
+      <nav aria-labelledby="footer-nav-visit">
+        <h3 id="footer-nav-visit" class="mb-4 font-serif text-sm font-semibold uppercase tracking-wider text-gold-light">Visit & Events</h3>
+        <ul class="space-y-2">
+          {footerLinks.visitEvents.map((link) => (
+            <li>
+              <a href={link.href} class="text-sm font-medium text-secondary-foreground/70 transition-colors hover:text-gold-light">
+                {link.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Wine & Spirits -->
+      <nav aria-labelledby="footer-nav-wine">
+        <h3 id="footer-nav-wine" class="mb-4 font-serif text-sm font-semibold uppercase tracking-wider text-gold-light">Wine & Spirits</h3>
+        <ul class="space-y-2">
+          {footerLinks.wineSpirits.map((link) => (
+            <li>
+              <a href={link.href} class="text-sm font-medium text-secondary-foreground/70 transition-colors hover:text-gold-light">
+                {link.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- About -->
+      <nav aria-labelledby="footer-nav-about">
+        <h3 id="footer-nav-about" class="mb-4 font-serif text-sm font-semibold uppercase tracking-wider text-gold-light">About</h3>
+        <ul class="space-y-2">
+          {footerLinks.about.map((link) => (
+            <li>
+              <a href={link.href} class="text-sm font-medium text-secondary-foreground/70 transition-colors hover:text-gold-light">
+                {link.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Legal -->
+      <nav aria-labelledby="footer-nav-legal">
+        <h3 id="footer-nav-legal" class="mb-4 font-serif text-sm font-semibold uppercase tracking-wider text-gold-light">Legal</h3>
+        <ul class="space-y-2">
+          {footerLinks.legal.map((link) => (
+            <li>
+              <a href={link.href} class="text-sm font-medium text-secondary-foreground/70 transition-colors hover:text-gold-light">
+                {link.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Resources -->
+      <nav aria-labelledby="footer-nav-resources">
+        <h3 id="footer-nav-resources" class="mb-4 font-serif text-sm font-semibold uppercase tracking-wider text-gold-light">Resources</h3>
+        <ul class="space-y-2">
+          {footerLinks.resources.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="text-sm font-medium text-secondary-foreground/70 transition-colors hover:text-gold-light"
+                {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              >
+                {link.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="mt-12 border-t border-secondary-foreground/10 pt-8">
+      <div class="flex flex-col items-center gap-4">
+        <img src={logoDark.src} alt="Valiant Vineyards" width="135" height="64" class="h-16 opacity-70" />
+        <div class="flex flex-col items-center gap-1 text-sm text-secondary-foreground/70">
+          <a
+            href={address.googleMapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="transition-colors hover:text-gold-light"
+          >
+            {address.street}, {address.city}, {address.state} {address.zip}
+          </a>
+          <a
+            href={`tel:${contact.phone.replace(/[^0-9]/g, '')}`}
+            class="transition-colors hover:text-gold-light"
+          >
+            {contact.phone}
+          </a>
+        </div>
+        <div class="flex gap-4">
+          <a
+            href={social.facebook}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Follow us on Facebook"
+            class="text-secondary-foreground/70 transition-colors hover:text-gold-light"
+          >
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
+            </svg>
+          </a>
+          <a
+            href={social.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Follow us on Instagram"
+            class="text-secondary-foreground/70 transition-colors hover:text-gold-light"
+          >
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd" />
+            </svg>
+          </a>
+        </div>
+        <p class="text-center text-sm text-secondary-foreground/70">
+          &copy; {currentYear} Valiant Vineyards, Inc. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const form = document.getElementById('newsletter-form') as HTMLFormElement;
+  const message = document.getElementById('newsletter-message') as HTMLElement;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const emailInput = form.querySelector('input[name="EMAIL"]') as HTMLInputElement;
+    const email = emailInput.value;
+    const button = form.querySelector('button') as HTMLButtonElement;
+    const originalText = button.textContent;
+
+    // Disable button during submission
+    button.disabled = true;
+    button.textContent = 'Subscribing...';
+
+    try {
+      const formData = new FormData();
+      formData.append('email', email);
+
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      // Show message
+      message.classList.remove('hidden', 'text-green-400', 'text-red-400');
+
+      if (result.success) {
+        message.classList.add('text-green-400');
+        message.textContent = 'Thanks for subscribing! We\'ll keep you updated on news and events.';
+        form.reset();
+      } else {
+        message.classList.add('text-red-400');
+        message.textContent = result.error || 'Something went wrong. Please try again.';
+      }
+    } catch (error) {
+      message.classList.remove('hidden', 'text-green-400', 'text-red-400');
+      message.classList.add('text-red-400');
+      message.textContent = 'Something went wrong. Please try again.';
+    }
+
+    // Re-enable button
+    button.disabled = false;
+    button.textContent = originalText;
+
+    // Auto-hide message after 8 seconds (longer for screen reader users)
+    setTimeout(() => {
+      message.classList.add('hidden');
+    }, 8000);
+  });
+</script>

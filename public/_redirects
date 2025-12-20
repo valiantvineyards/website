@@ -1,0 +1,18 @@
+# Valiant Vineyards URL Redirects
+# Format: /old-path  /new-path  status-code
+
+# URL changes (with and without trailing slashes)
+/about/people   /our-team/  301
+/about/people/  /our-team/  301
+/private-events/weddings   /weddings/  301
+/private-events/weddings/  /weddings/  301
+
+# Legacy QR code redirects (with and without trailing slashes)
+/gold-rush   /recipes/gold-rush/  301
+/gold-rush/  /recipes/gold-rush/  301
+/south-dakota-gold-rush-cocktail   /recipes/gold-rush/  301
+/south-dakota-gold-rush-cocktail/  /recipes/gold-rush/  301
+/cherry-bourbon-sour-cocktail   /recipes/cherry-bourbon-sour-cocktail/  301
+/cherry-bourbon-sour-cocktail/  /recipes/cherry-bourbon-sour-cocktail/  301
+/the-whiskey-trip-podcast   /news/post/the-whiskey-trip-podcast/  301
+/the-whiskey-trip-podcast/  /news/post/the-whiskey-trip-podcast/  301

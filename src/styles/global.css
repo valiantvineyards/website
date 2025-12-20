@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+/* Self-hosted variable fonts */
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/InterVariable.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Source Serif 4";
+  src: url("/fonts/SourceSerif4Variable-Roman.ttf.woff2") format("woff2-variations");
+  font-weight: 200 900;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Fallback font with adjusted metrics to minimize FOUT */
+@font-face {
+  font-family: "Source Serif Fallback";
+  src: local("Times New Roman");
+  size-adjust: 104%;
+  ascent-override: 97%;
+  descent-override: 27%;
+  line-gap-override: 0%;
+}
+
+/* Valiant Vineyards Design Tokens */
+@theme {
+  /* Colors - Minimal Black & White with Gold Accent */
+  /* WCAG AA contrast verified (4.5:1 min for text) */
+  /* #996F00 on #FFFFFF (white) = 5.0:1 ✓ */
+  /* #A17F00 on #1C1C1C (near-black) = 4.6:1 ✓ (meets AA) */
+  --color-gold: #996F00;
+  --color-gold-light: #A17F00;
+  --color-gold-dark: #7A5900;
+  --color-burgundy: #722f37;
+  --color-burgundy-light: #8b3a44;
+  --color-burgundy-dark: #5a252c;
+  --color-cream: #FFFFFF;
+  --color-charcoal: #1C1C1C;
+  --color-slate: #4a4a4a;
+
+  /* Semantic colors */
+  --color-primary: var(--color-gold);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--color-charcoal);
+  --color-secondary-foreground: #ffffff;
+  --color-background: var(--color-cream);
+  --color-foreground: var(--color-charcoal);
+  --color-muted: #f1ede8;
+  --color-muted-light: #FAF8F5;
+  --color-muted-foreground: var(--color-slate);
+  --color-accent: var(--color-burgundy);
+  --color-accent-foreground: #ffffff;
+  --color-border: #e5e0d8;
+  --color-input: #e5e0d8;
+  --color-ring: var(--color-gold);
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+
+  /* Typography */
+  --font-serif: "Source Serif 4", "Source Serif Fallback", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  /* Spacing */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+}
+
+/* Base styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable; /* Reserve scrollbar space to prevent layout shift */
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+
+  /* Sans-serif body text vertical scaling */
+  p, span, a, li, td, th, label, input, textarea, button, dd, dt {
+    transform: scaleY(0.95);
+    transform-origin: top;
+  }
+
+  /* Mobile nav sub-menu links need slightly less compression */
+  .mobile-nav-submenu a {
+    transform: scaleY(0.97);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    @apply font-semibold tracking-tight;
+  }
+
+  h1, h2 {
+    transform: scaleY(0.92);
+    transform-origin: top;
+  }
+}
+
+/* Animation keyframes for shadcn components */
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--bits-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--bits-accordion-content-height); }
+  to { height: 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Fade-in animation utility - masks font swap on dynamically rendered content */
+.animate-fade-in {
+  animation: fade-in 0.15s ease-out;
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

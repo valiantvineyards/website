@@ -1,0 +1,422 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/Button.astro";
+import { Image } from "astro:assets";
+import HeroImage from "../components/HeroImage.astro";
+import { getCollection } from "astro:content";
+import heroImage from "../assets/images/red-grapes-vineyard-sunrise.webp";
+import wineImage from "../assets/images/wine-pouring-into-glass.webp";
+import spiritsImage from "../assets/images/clay-turner-bottles-in-sunlight.jpg";
+import stayImage from "../assets/images/wine-glass-next-to-bed-with-lamp.webp";
+import defaultNewsImage from "../assets/images/wine-bottles-with-medals-landscape.webp";
+import ourStoryBg from "../assets/images/red-grapes-vineyard-sunrise.webp";
+import { hours, address, contact } from "../data/site-info";
+
+// Fetch events: upcoming first (soonest first), then past events to fill remaining slots
+const allPosts = await getCollection("events", ({ data }) => !data.draft);
+const now = new Date();
+const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+const upcoming = allPosts
+  .filter((post) => {
+    const eventDate = post.data.eventDate ?? post.data.date;
+    return eventDate >= today;
+  })
+  .sort((a, b) => {
+    if (a.data.pinned && !b.data.pinned) return -1;
+    if (!a.data.pinned && b.data.pinned) return 1;
+    const dateA = a.data.eventDate ?? a.data.date;
+    const dateB = b.data.eventDate ?? b.data.date;
+    return dateA.valueOf() - dateB.valueOf();
+  });
+
+const past = allPosts
+  .filter((post) => {
+    const eventDate = post.data.eventDate ?? post.data.date;
+    return eventDate < today;
+  })
+  .sort((a, b) => {
+    if (a.data.pinned && !b.data.pinned) return -1;
+    if (!a.data.pinned && b.data.pinned) return 1;
+    const dateA = a.data.eventDate ?? a.data.date;
+    const dateB = b.data.eventDate ?? b.data.date;
+    return dateB.valueOf() - dateA.valueOf();
+  });
+
+const featuredPosts = [...upcoming, ...past].slice(0, 3);
+
+// Fetch pinned stories for announcements section (newest first)
+const pinnedStories = (await getCollection("stories", ({ data }) =>
+  !data.draft && data.pinned
+)).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<BaseLayout title="Home" description="Valiant Vineyards Winery & Distillery - Experience award-winning wines, craft spirits, and warm hospitality in the heart of South Dakota.">
+  <!-- Mobile Hero: Image with overlaid h1, then text section (hidden on md+) -->
+  <section class="md:hidden">
+    <!-- Hero image with overlaid heading -->
+    <div class="relative w-full aspect-4/3 sm:aspect-video">
+      <Image
+        src={heroImage}
+        alt="Dark red grapes on the vine with autumn leaves at harvest time"
+        widths={[640, 768, 1024]}
+        sizes="100vw"
+        quality={80}
+        loading="eager"
+        fetchpriority="high"
+        class="absolute inset-0 w-full h-full object-cover object-center"
+      />
+      <!-- Centered h1 on image with backdrop -->
+      <div class="absolute inset-0 flex items-center justify-center px-4">
+        <div class="inline-block bg-black/50 px-8 py-6">
+          <h1 class="font-serif text-4xl font-semibold tracking-tight text-white text-center">
+            Sip. Celebrate. Stay.
+          </h1>
+        </div>
+      </div>
+    </div>
+    <!-- Text content section with light background -->
+    <div class="bg-neutral-100 px-4 py-24 text-center">
+      <div class="mx-auto max-w-2xl">
+        <p class="mx-auto max-w-2xl text-lg font-medium text-neutral-700">
+          Since 1996, the Nygaard family has welcomed guests to sip award-winning wines, sample small-batch spirits, and unwind above the Missouri River in Vermillion, South Dakota.
+        </p>
+        <div class="mx-auto mt-8 max-w-xs">
+          <Button href="/tasting-room/" variant="gold" size="lg" class="w-full">
+            Visit the Tasting Room
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Desktop Hero: Original overlaid layout (hidden on mobile) -->
+  <section class="relative hidden md:block">
+    <div class="relative min-h-[90vh] flex items-center justify-center py-24 lg:py-32 bg-neutral-900">
+      <!-- Background image with blur-up placeholder -->
+      <HeroImage
+        src={heroImage}
+        alt="Dark red grapes on the vine with autumn leaves at harvest time"
+        widths={[640, 1024, 1536, 2048]}
+        sizes="100vw"
+        quality={80}
+        position="center"
+      />
+      <!-- Content -->
+      <div class="container relative mx-auto px-4 lg:px-8">
+        <div class="mx-auto max-w-2xl text-center">
+          <div class="inline-block bg-black/50 px-8 py-6">
+            <h1 class="font-serif text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+              Sip. Celebrate. Stay.
+            </h1>
+            <p class="mx-auto mt-6 font-serif max-w-2xl text-xl font-medium text-white lg:text-[1.375rem]">
+              Since 1996, the Nygaard family has welcomed guests to sip award-winning wines, sample small-batch spirits, and unwind above the Missouri River in Vermillion, South Dakota.
+            </p>
+            <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <Button href="/tasting-room/" variant="gold" size="lg">
+                Visit the Tasting Room
+              </Button>
+              <Button href="/about/" variant="white" size="lg">
+                Our Story
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pinned Stories / Announcements Section -->
+  {pinnedStories.length > 0 && (
+    <section class="py-16 lg:py-20 bg-neutral-50">
+      <div class="mx-auto max-w-5xl px-4 lg:px-8">
+        <div class="space-y-8">
+          {pinnedStories.map((story) => {
+            const image = story.data.featuredImage ?? defaultNewsImage;
+            const imageAlt = story.data.featuredImageAlt ?? story.data.title;
+
+            return (
+              <a href={`/stories/${story.id}/`} class="group block max-w-xl mx-auto lg:max-w-none lg:grid lg:grid-cols-5 bg-white border border-border overflow-hidden hover:border-gold hover:shadow-lg transition-all">
+                <div class="lg:col-span-2 aspect-video lg:aspect-auto overflow-hidden">
+                  <Image
+                    src={image}
+                    alt={imageAlt}
+                    widths={[400, 600, 800]}
+                    sizes="(max-width: 768px) 100vw, 40vw"
+                    class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <div class="lg:col-span-3 p-6 lg:p-8 flex flex-col justify-center">
+                  <h2 class="font-serif text-2xl font-semibold group-hover:text-gold transition-colors">{story.data.title}</h2>
+                  <p class="mt-3 text-muted-foreground leading-relaxed">{story.data.description}</p>
+                  <span class="mt-4 inline-flex items-center text-gold font-medium group-hover:underline">
+                    Read More
+                    <svg class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- News & Events Section -->
+  <section class="py-24 lg:py-34">
+    <div class="mx-auto max-w-7xl px-4 lg:px-8">
+      <div class="mb-10 text-center">
+        <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">What's Happening</h2>
+        <p class="mx-auto mt-4 max-w-2xl text-muted-foreground">
+          Join us for tastings, live music, and seasonal celebrations.
+        </p>
+      </div>
+      {featuredPosts.length > 0 ? (
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {featuredPosts.map((post, index) => {
+            const image = post.data.featuredImage ?? defaultNewsImage;
+            const imageAlt = post.data.featuredImageAlt ?? post.data.title;
+            const isLastOfThree = featuredPosts.length === 3 && index === 2;
+            const eventDate = post.data.eventDate ?? post.data.date;
+            const isPastEvent = eventDate < today;
+            const formattedEventDate = eventDate
+              ? new Date(eventDate.getUTCFullYear(), eventDate.getUTCMonth(), eventDate.getUTCDate())
+                  .toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+              : undefined;
+
+            return (
+              <article
+                class:list={[
+                  "group overflow-hidden border border-border bg-background transition-all hover:border-gold hover:shadow-lg",
+                  isLastOfThree && "sm:col-span-2 sm:max-w-xl sm:mx-auto lg:col-span-1 lg:max-w-none"
+                ]}
+              >
+                <a href={`/events/${post.id}/`} class="block">
+                  <div class="aspect-3/2 overflow-hidden relative">
+                    <Image
+                      src={image}
+                      alt={imageAlt}
+                      widths={[400, 600, 800]}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    {isPastEvent ? (
+                      <span class="absolute top-3 right-3 bg-neutral-500 text-white text-sm font-medium px-3 py-1">
+                        Past Event
+                      </span>
+                    ) : formattedEventDate && (
+                      <span class="absolute top-3 right-3 bg-gold text-white text-sm font-medium px-3 py-1">
+                        {formattedEventDate}
+                      </span>
+                    )}
+                  </div>
+                  <div class="p-6">
+                    <h3 class="font-serif text-xl font-semibold group-hover:text-gold line-clamp-2">{post.data.title}</h3>
+                    <p class="mt-2 line-clamp-2 text-muted-foreground">{post.data.description}</p>
+                  </div>
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <div class="text-center py-8">
+          <p class="text-muted-foreground">Check back soon for news and events!</p>
+        </div>
+      )}
+      <div class="mt-10 text-center">
+        <Button href="/events/" variant="gold-outline" size="lg">
+          Explore Upcoming Events
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Story Teaser -->
+  <section class="bg-neutral-100 relative py-24 lg:py-34">
+    <!-- Background Image -->
+    <Image
+      src={ourStoryBg}
+      alt=""
+      widths={[640, 1024, 1536, 2048]}
+      sizes="100vw"
+      quality={80}
+      class="hidden md:block absolute inset-0 h-full w-full object-cover object-top-left opacity-30"
+    />
+    <!-- White overlay -->
+    <div class="hidden md:block absolute inset-0 bg-linear-to-bl from-white/20 to-white/80"></div>
+    <!-- Content -->
+    <div class="container relative mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center">
+        <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">Pioneers of South Dakota Wine</h2>
+        <p class="mt-6 text-lg leading-relaxed">
+          In 1996, Eldon Nygaard fermented South Dakota's first commercial wine after drafting the legislation that made it possible.
+          Today, his family continues the tradition — with son Leif, a sixth-generation American winemaker, now leading Stone Faces Distillery.
+          What began with a mulberry wine on a Turner County farm has grown into a 15,000-square-foot destination where visitors can taste, celebrate, and stay.
+        </p>
+        <Button href="/about/" variant="gold" size="lg" class="mt-8">
+          Read Our Full Story
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Three Pillars Section -->
+  <section class="py-24 lg:py-34">
+    <div class="mx-auto max-w-7xl px-4 lg:px-8">
+      <div class="grid gap-8 max-w-xl mx-auto md:max-w-none md:grid-cols-2 lg:grid-cols-3">
+        <!-- Wines Card -->
+        <a href="/wines/" class="group overflow-hidden border border-border bg-background transition-all hover:border-gold hover:shadow-lg">
+          <div class="aspect-3/2 overflow-hidden">
+            <Image
+              src={wineImage}
+              alt="Wine being poured into a glass"
+              class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              widths={[400, 600, 800]}
+              sizes="(max-width: 768px) 100vw, 33vw"
+              quality={80}
+            />
+          </div>
+          <div class="p-6 text-center">
+            <h3 class="font-serif text-xl font-semibold group-hover:text-gold">Wines</h3>
+            <p class="mt-2 text-muted-foreground">
+              From bold reds to crisp whites, our award-winning wines are crafted with care right here in South Dakota.
+            </p>
+            <span class="mt-4 inline-block text-base font-semibold text-gold">
+              Explore Wines
+            </span>
+          </div>
+        </a>
+
+        <!-- Spirits Card -->
+        <a href="/distillery/" class="group overflow-hidden border border-border bg-background transition-all hover:border-gold hover:shadow-lg">
+          <div class="aspect-3/2 overflow-hidden">
+            <Image
+              src={spiritsImage}
+              alt="Clay Turner spirit bottles in sunlight"
+              class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              widths={[400, 600, 800]}
+              sizes="(max-width: 768px) 100vw, 33vw"
+              quality={80}
+            />
+          </div>
+          <div class="p-6 text-center">
+            <h3 class="font-serif text-xl font-semibold group-hover:text-gold">Spirits</h3>
+            <p class="mt-2 text-muted-foreground">
+              Stone Faces Distillery crafts small-batch vodka, whiskey, bourbon, and more with local ingredients.
+            </p>
+            <span class="mt-4 inline-block text-base font-semibold text-gold">
+              Discover Spirits
+            </span>
+          </div>
+        </a>
+
+        <!-- Stay Card -->
+        <a href="/bed-and-breakfast/" class="group md:col-span-2 md:max-w-xl md:mx-auto lg:col-span-1 lg:max-w-none overflow-hidden border border-border bg-background transition-all hover:border-gold hover:shadow-lg">
+          <div class="aspect-3/2 overflow-hidden">
+            <Image
+              src={stayImage}
+              alt="Wine glass next to a cozy bed with lamp"
+              class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              widths={[400, 600, 800]}
+              sizes="(max-width: 768px) 100vw, 33vw"
+              quality={80}
+            />
+          </div>
+          <div class="p-6 text-center">
+            <h3 class="font-serif text-xl font-semibold group-hover:text-gold">Stay</h3>
+            <p class="mt-2 text-muted-foreground">
+              Extend your visit with an overnight stay at our cozy bed & breakfast nestled in the countryside.
+            </p>
+            <span class="mt-4 inline-block text-base font-semibold text-gold">
+              Explore Rooms
+            </span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visit Info Section -->
+  <section class="bg-secondary py-24 lg:py-34">
+    <div class="container mx-auto px-4 lg:px-8">
+      <!-- Section Header -->
+      <div class="mb-12 text-center">
+        <h2 class="font-serif text-3xl font-semibold tracking-tight text-secondary-foreground sm:text-4xl">Plan Your Visit</h2>
+        <p class="mx-auto mt-4 max-w-2xl text-secondary-foreground/80">
+          Stop by the tasting room to sample our wines and spirits. No reservation needed for tastings.
+        </p>
+      </div>
+
+      <!-- Two Column Grid with Better Balance -->
+      <div class="mx-auto grid max-w-5xl gap-8 lg:grid-cols-2 lg:gap-12">
+        <!-- Hours Column -->
+        <div class="border border-secondary-foreground/20 bg-secondary-foreground/5 p-8 backdrop-blur-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-white">Tasting Room Hours</h3>
+          <dl class="mt-6 space-y-4">
+            {hours.tastingRoom.map((schedule) => (
+              <div class="flex justify-between border-b border-secondary-foreground/10 pb-3">
+                <dt class="text-secondary-foreground/80">{schedule.days}</dt>
+                <dd class="font-medium text-secondary-foreground/80">{schedule.hours}</dd>
+              </div>
+            ))}
+          </dl>
+          {hours.note && (
+            <p class="mt-6 text-sm text-secondary-foreground/80">{hours.note}</p>
+          )}
+        </div>
+
+        <!-- Location & Contact Column -->
+        <div class="border border-secondary-foreground/20 bg-secondary-foreground/5 p-8 backdrop-blur-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-white">Location & Contact</h3>
+
+          <div class="mt-6">
+            <p class="text-base text-secondary-foreground/80">
+              {address.street}<br />
+              {address.city}, {address.state} {address.zip}
+            </p>
+            <a
+              href={address.googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="mt-3 inline-flex items-center text-sm font-medium text-secondary-foreground/80 hover:text-gold-light"
+            >
+              Get Directions
+              <svg class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+
+          <div class="mt-8 border-t border-secondary-foreground/10 pt-8">
+            <p class="text-base text-secondary-foreground/80">
+              <a href={`tel:${contact.phone.replace(/[^0-9]/g, '')}`} class="hover:text-gold-light">{contact.phone}</a><br />
+              <a href={`mailto:${contact.email}`} class="hover:text-gold-light">{contact.email}</a>
+            </p>
+          </div>
+
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Button href="/tasting-room/" variant="gold" size="lg" class="w-full sm:flex-1">
+              Visit Details
+            </Button>
+            <Button href="/contact/" variant="white" size="lg" class="w-full sm:flex-1">
+              Contact Us
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

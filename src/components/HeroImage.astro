@@ -1,0 +1,134 @@
+---
+import { Image, getImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import { readFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  class?: string;
+  widths?: number[];
+  sizes?: string;
+  quality?: number;
+  position?: string;
+}
+
+const {
+  src,
+  alt,
+  class: className = "",
+  widths = [640, 1024, 1536, 2048],
+  sizes = "100vw",
+  quality = 90,
+  position = "center",
+} = Astro.props;
+
+// Generate tiny placeholder for blur-up effect
+const placeholder = await getImage({
+  src,
+  width: 20,
+  quality: 20,
+  format: "webp",
+});
+
+// Convert placeholder to inline base64 data URL
+// This ensures the placeholder is embedded in the HTML and displays instantly
+// without requiring an additional network request
+let dataUrl: string;
+
+if (import.meta.env.DEV) {
+  // In dev mode, fetch the placeholder from Vite's dev server and convert to base64
+  try {
+    const response = await fetch(new URL(placeholder.src, Astro.url.origin));
+    const buffer = await response.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString("base64");
+    dataUrl = `data:image/webp;base64,${base64}`;
+  } catch {
+    // Fallback to URL if fetch fails
+    dataUrl = placeholder.src;
+  }
+} else {
+  // In build mode, read the file from disk and inline as base64
+  const filePath = fileURLToPath(new URL(`../../dist${placeholder.src}`, import.meta.url));
+  try {
+    const buffer = await readFile(filePath);
+    const base64 = buffer.toString("base64");
+    dataUrl = `data:image/webp;base64,${base64}`;
+  } catch {
+    // Fallback to URL if file read fails
+    dataUrl = placeholder.src;
+  }
+}
+---
+
+<div
+  class="hero-image-container"
+  style={`--placeholder-url: url('${dataUrl}'); --object-position: ${position};`}
+>
+  <div class="hero-image-placeholder" aria-hidden="true"></div>
+  <Image
+    src={src}
+    alt={alt}
+    class:list={[className, "hero-image-main"]}
+    widths={widths}
+    sizes={sizes}
+    quality={quality}
+    loading="eager"
+    decoding="async"
+    fetchpriority="high"
+    onload="this.classList.add('loaded')"
+  />
+</div>
+
+<script>
+  // Handle cached images - skip transition entirely for instant display
+  document.querySelectorAll('.hero-image-main').forEach((img) => {
+    const imgEl = img as HTMLImageElement;
+    if (imgEl.complete && imgEl.naturalHeight !== 0) {
+      // Image already loaded (cached) - show instantly without transition
+      imgEl.classList.add('cached');
+    }
+  });
+</script>
+
+<style>
+  .hero-image-container {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0; /* Keep below overlay and content */
+    background-color: #1a1a1a; /* Dark fallback prevents cream flash */
+  }
+
+  .hero-image-placeholder {
+    position: absolute;
+    inset: -10px; /* Extend slightly to hide blur edges */
+    background-image: var(--placeholder-url);
+    background-size: cover;
+    background-position: var(--object-position);
+    filter: blur(20px);
+    transform: scale(1.1);
+  }
+
+  .hero-image-main {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--object-position);
+    opacity: 0;
+    transition: opacity 150ms ease-in-out;
+  }
+
+  /* Cached images skip the transition entirely */
+  .hero-image-main.cached {
+    transition: none;
+    opacity: 1;
+  }
+
+  .hero-image-main.loaded {
+    opacity: 1;
+  }
+</style>

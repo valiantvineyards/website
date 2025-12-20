@@ -1,0 +1,26 @@
+---
+import { getCollection, render } from "astro:content";
+import StoryLayout from "../../layouts/StoryLayout.astro";
+import type { GetStaticPaths } from "astro";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getCollection("stories", ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+};
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<StoryLayout
+  title={post.data.title}
+  description={post.data.description}
+  date={post.data.date}
+  featuredImage={post.data.featuredImage}
+  featuredImageAlt={post.data.featuredImageAlt}
+>
+  <Content />
+</StoryLayout>
