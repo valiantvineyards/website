@@ -1,0 +1,89 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Button from "../../components/Button.astro";
+import { Image } from "astro:assets";
+import cocktailImage from "../../assets/images/cocktail-cherry-bourbon-sour.webp";
+---
+
+<BaseLayout title="Cherry Bourbon Sour Cocktail" description="A sophisticated bourbon sour featuring Clay Turner 5 Year Bourbon, bourbon-marinated cherries, and a silky egg white finish.">
+  <section class="py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-2xl">
+        <div class="mb-8 overflow-hidden">
+          <Image
+            src={cocktailImage}
+            alt="Cherry Bourbon Sour cocktail with egg white foam and cherry garnish"
+            widths={[400, 600, 800]}
+            sizes="(max-width: 672px) 100vw, 672px"
+            quality={80}
+            class="w-full h-auto"
+          />
+        </div>
+        <p class="text-gold font-semibold tracking-widest uppercase mb-3">Cocktail Recipe</p>
+        <h1 class="font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl mb-6">
+          Cherry Bourbon Sour
+        </h1>
+        <p class="text-lg text-muted-foreground mb-10">
+          A harmonious balance of flavors combining tangy citrus with sweet cherry notes. The bourbon-soaked cherries and egg white create a sophisticated drink with a smooth texture and refined taste.
+        </p>
+
+        <div class="bg-neutral-50 rounded-lg p-8 mb-10">
+          <h2 class="font-serif text-2xl font-semibold text-foreground mb-6">Ingredients</h2>
+          <ul class="space-y-3 text-foreground">
+            <li class="flex items-start gap-3">
+              <span class="text-gold font-semibold">1½ oz</span>
+              <span>Clay Turner 5 Year Bourbon</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-gold font-semibold">1 oz</span>
+              <span>Fresh lemon juice</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-gold font-semibold">1 oz</span>
+              <span>Simple syrup</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-gold font-semibold">2</span>
+              <span>Sweet cherries (bourbon-marinated)</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-gold font-semibold">1 tsp</span>
+              <span>Egg white</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="mb-10">
+          <h2 class="font-serif text-2xl font-semibold text-foreground mb-6">Instructions</h2>
+          <ol class="space-y-4 text-foreground">
+            <li class="flex gap-4">
+              <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gold text-white flex items-center justify-center font-semibold">1</span>
+              <span class="pt-1">Combine bourbon, lemon juice, simple syrup, and cherries in a blender.</span>
+            </li>
+            <li class="flex gap-4">
+              <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gold text-white flex items-center justify-center font-semibold">2</span>
+              <span class="pt-1">Blend until smooth.</span>
+            </li>
+            <li class="flex gap-4">
+              <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gold text-white flex items-center justify-center font-semibold">3</span>
+              <span class="pt-1">Add the egg white and blend for just 2 seconds.</span>
+            </li>
+            <li class="flex gap-4">
+              <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gold text-white flex items-center justify-center font-semibold">4</span>
+              <span class="pt-1">Pour over ice and serve.</span>
+            </li>
+          </ol>
+        </div>
+
+        <div class="border-t border-neutral-200 pt-8">
+          <p class="text-sm text-muted-foreground mb-6">
+            Made with Clay Turner 5 Year Bourbon, crafted at Stone Faces Distillery in Vermillion, South Dakota.
+          </p>
+          <Button href="/distillery" variant="gold-outline">
+            Explore Our Spirits
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,409 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/Button.astro";
+import { Image } from "astro:assets";
+import HeroImage from "../components/HeroImage.astro";
+
+// Import images
+import heroImage from "../assets/images/banquet-table-setting.webp";
+import banquetImage from "../assets/images/banquet.webp";
+import boardroomImage from "../assets/images/boardroom.webp";
+import weddingTablesImage from "../assets/images/wedding-tables.webp";
+import weddingCakeImage from "../assets/images/wedding-cake.webp";
+import weddingSunsetImage from "../assets/images/wedding-sunset.webp";
+
+const eventTypes = [
+  { name: "Business Meetings", icon: "briefcase" },
+  { name: "Awards Dinners", icon: "trophy" },
+  { name: "Family Reunions", icon: "users" },
+  { name: "Anniversaries", icon: "heart" },
+  { name: "Birthday Parties", icon: "cake" },
+  { name: "Graduations", icon: "graduation" },
+  { name: "Rehearsal Dinners", icon: "utensils" },
+  { name: "Holiday Parties", icon: "star" },
+];
+---
+
+<BaseLayout title="Private Events" description="Host your private event at Valiant Vineyards - the perfect venue for banquets, meetings, weddings, and special occasions. Accommodating 10-200 guests.">
+  <!-- Hero Section -->
+  <section class="relative">
+    <div class="relative min-h-[60vh] xl:min-h-[75vh] flex items-center justify-center py-24 bg-neutral-900">
+      <HeroImage
+        src={heroImage}
+        alt="Elegant banquet table setting at Valiant Vineyards"
+        position="bottom"
+        quality={60}
+      />
+      <div class="container relative mx-auto px-4 lg:px-8 text-center">
+        <div class="inline-block bg-black/50 px-8 py-6">
+          <h1 class="font-serif text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+            Private Events
+          </h1>
+          <p class="mt-4 font-serif text-xl text-white font-medium max-w-2xl mx-auto lg:text-2xl">
+            Create unforgettable memories in our warm and elegant venue
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Introduction -->
+  <section class="py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center">
+        <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl mb-6">
+          Your Perfect Venue Awaits
+        </h2>
+        <p class="text-lg leading-relaxed text-muted-foreground mb-4">
+          Valiant Vineyards offers complete banquet facilities in a warm and cozy atmosphere. Our experienced staff will help you create a memorable event, whether it's an intimate gathering or a grand celebration.
+        </p>
+        <p class="text-lg leading-relaxed text-muted-foreground">
+          With flexible spaces accommodating 10 to 200 guests, we can host your event any day of the week with advance notice.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Event Types -->
+  <section class="bg-neutral-50 py-16 lg:py-20">
+    <div class="container mx-auto px-4 lg:px-8">
+      <h2 class="font-serif text-2xl font-semibold tracking-tight text-center sm:text-3xl mb-10">
+        Perfect For Every Occasion
+      </h2>
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-4 max-w-4xl mx-auto">
+        {eventTypes.map((event) => (
+          <div class="flex items-center gap-3 border border-border bg-background p-4">
+            <div class="shrink-0 text-gold" aria-hidden="true">
+              {event.icon === "briefcase" && (
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              )}
+              {event.icon === "trophy" && (
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 512 512">
+                  <path d="M280 378.4l0 85.6 104 0 0 48-256 0 0-48 104 0 0-85.6c-16.9-6.6-40.5-20.8-63.3-51.8-35.2-9.2-77.1-27.7-110.6-64.8-34.6-38.3-58.1-94.2-58.1-173.9l0-24 97.6 0c-.3-5.2-.5-10.6-.7-16-.6-15.3-.9-31.3-.9-48L416 0c0 16.7-.3 32.7-.9 48-.2 5.4-.4 10.8-.7 16l97.6 0 0 24c0 75.7-22.6 130-56.4 168.2-32.4 36.6-73.5 56.3-109.8 67-23.6 33.4-48.3 48.5-65.9 55.3zm99.8-121.6c14.4-8.5 28-19.1 39.9-32.5 21.9-24.6 39.3-60.2 43.4-112.3l-52.3 0c-6.2 60.9-17.4 108.2-31 144.8zM101.2 112l-52.4 0c4.1 56 22.4 92.9 44.9 117.7 12.2 13.5 26 23.9 40.3 31.9-14.4-37.3-26.3-86-32.8-149.6zM212.9 305.3c14.7 17.7 28.1 25 36 28.2 3.1 1.2 5.6 1.9 7.2 2.3 1.6-.3 4.1-1 7.2-2.3 7.9-3.1 21.2-10.5 36-28.2 27.1-32.6 61.9-104.2 68-257.3L144.9 48c6.1 153.1 40.8 224.7 68 257.3z"/>
+                </svg>
+              )}
+              {event.icon === "users" && (
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              )}
+              {event.icon === "heart" && (
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              )}
+              {event.icon === "cake" && (
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z" />
+                </svg>
+              )}
+              {event.icon === "graduation" && (
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 576 512">
+                  <path d="M288 16L23.1 133.7c-1.5 .7-9.2 4.1-23.1 10.3l0 336 48 0 0-282.7 48 21.3 0 165.3c0 53 86 96 192 96s192-43 192-96l0-165.3 72.9-32.4c1.5-.7 9.2-4.1 23.1-10.3l0-32c-13.9-6.2-21.6-9.6-23.1-10.3L288 16zM144 384l0-144 144 64 144-64 0 144c0 .1 0 .1 0 .3s-.1 .4-.3 .9c-.4 .9-1.3 2.7-3.4 5.2-4.4 5.2-12.6 11.9-26 18.6-26.8 13.4-67.1 23-114.3 23s-87.5-9.7-114.3-23c-13.4-6.7-21.6-13.4-26-18.6-2.1-2.5-3-4.3-3.4-5.2-.2-.5-.3-.8-.3-.9s0-.2 0-.3zM493.8 160L288 251.5 82.2 160 288 68.5 493.8 160z"/>
+                </svg>
+              )}
+              {event.icon === "utensils" && (
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 512 512">
+                  <path d="M403.3 9.6c8 10.6 5.8 25.6-4.8 33.6l-122.7 92c-17.2 12.9-27.7 32.5-27.7 52.8 0 16.7 6.6 32.7 18.4 44.5l13.1 13.1c11.8 11.8 27.8 18.4 44.5 18.4 20.2 0 39.9-10.5 52.8-27.7l92-122.7c8-10.6 23-12.8 33.6-4.8s12.8 23 4.8 33.6l-92 122.7c-21 27.9-54.3 46.9-91.2 46.9-24.5 0-48.1-8.1-67.3-22.8L41.1 505c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9L222.9 255.3c-14.7-19.2-22.8-42.8-22.8-67.3 0-36.9 19-70.2 46.9-91.2l122.7-92c10.6-8 25.6-5.8 33.6 4.8zM457.1 55c9.4 9.4 9.4 24.6 0 33.9l-116 116c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l116-116c9.4-9.4 24.6-9.4 33.9 0zM382.8 348.8L505.1 471c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-145-145c19.6-.3 38.8-4.1 56.7-11.2zM152.1 186L58.2 92.1c-19.4 33.6-14.7 77.4 14 106.2l69.9 69.9-33.9 33.9-69.9-69.9c-53.1-53.1-53.1-139.2 0-192.3l.8-.8c9.4-9.4 24.6-9.4 33.9 0l90.3 90.3c-7.1 17.9-11 37.1-11.2 56.7z"/>
+                </svg>
+              )}
+              {event.icon === "star" && (
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 640 512">
+                  <path d="M159.2 12.6c5.7-10.5 18.1-15.2 29.3-11.1L320 49.3 451.5 1.5c11.2-4.1 23.7 .7 29.3 11.1l81.6 151c32.4 60.1 10.6 133.3-45.6 167l35.8 98.4 55.2-20.1c12.5-4.5 26.2 1.9 30.8 14.3s-1.9 26.2-14.3 30.8c-51.8 18.9-103.7 37.7-155.5 56.6-12.5 4.5-26.2-1.9-30.8-14.3s1.9-26.2 14.3-30.8l55.2-20.1-35.8-98.5c-61.2 9.4-121.7-29.6-136.3-92.5l-15.3-65.8-15.3 65.8c-14.6 62.9-75.1 101.9-136.3 92.5l-35.8 98.5 55.2 20.1c12.5 4.5 18.9 18.3 14.3 30.8s-18.3 18.9-30.8 14.3C119.5 491.7 67.6 472.8 15.8 454 3.3 449.4-3.1 435.7 1.5 423.2s18.3-18.9 30.8-14.3l55.2 20.1 35.8-98.4c-56.2-33.7-78.1-106.9-45.6-167l81.6-151zm32.4 41l-34.8 64.3 120.2 43.7 16.5-71-101.9-37.1zM119.8 186.4c-22.4 41.5-2.8 93.3 41.6 109.4 41.3 15 86.5-9.4 96.5-52.3l8.1-34.7-132.3-48.1-13.9 25.7zM448.4 53.6l-101.9 37.1 16.5 71 120.2-43.7-34.8-64.3zm71.7 132.7l-13.9-25.7-132.3 48.1 8.1 34.7c10 42.9 55.2 67.3 96.5 52.3 44.3-16.1 64-67.9 41.6-109.4z"/>
+                </svg>
+              )}
+            </div>
+            <span class="text-sm font-medium">{event.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Banquet Hall Section -->
+  <section class="py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="grid gap-12 lg:gap-16 items-center max-w-6xl mx-auto lg:grid-cols-2">
+        <div class="overflow-hidden shadow-lg">
+          <Image
+            src={banquetImage}
+            alt="Elegant banquet hall set for a large event"
+            class="w-full h-auto"
+            widths={[640, 1024]}
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            quality={65}
+          />
+        </div>
+        <div>
+          <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl mb-6">
+            Banquet Hall
+          </h2>
+          <p class="text-lg text-muted-foreground mb-4">
+            Our spacious banquet hall features beautiful murals, a cozy fireplace, and elegant table settings that create the perfect atmosphere for your special occasion.
+          </p>
+          <p class="text-lg text-muted-foreground mb-6">
+            With capacity for up to 200 guests, we can accommodate everything from intimate dinners to large celebrations. Our versatile space can be configured to match your vision.
+          </p>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-center gap-3 text-muted-foreground">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Accommodates 10-200 guests</span>
+            </li>
+            <li class="flex items-center gap-3 text-muted-foreground">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Full catering services available</span>
+            </li>
+            <li class="flex items-center gap-3 text-muted-foreground">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Flexible table arrangements</span>
+            </li>
+            <li class="flex items-center gap-3 text-muted-foreground">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Wine & spirits bar service</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Boardroom Section -->
+  <section class="bg-neutral-50 py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="grid gap-12 lg:gap-16 items-center max-w-6xl mx-auto lg:grid-cols-2">
+        <div class="lg:order-last overflow-hidden shadow-lg">
+          <Image
+            src={boardroomImage}
+            alt="The Boardroom - an elegant wood-paneled meeting room"
+            class="w-full h-auto"
+            widths={[640, 1024]}
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            quality={65}
+          />
+        </div>
+        <div>
+          <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl mb-6">
+            The Boardroom
+          </h2>
+          <p class="text-lg text-muted-foreground mb-4">
+            For more intimate gatherings and professional meetings, The Boardroom offers a distinguished setting with rich wood paneling and classic furnishings.
+          </p>
+          <p class="text-lg text-muted-foreground mb-6">
+            This elegant space is perfect for executive meetings, small dinner parties, or private tastings. Reserve The Boardroom for an exclusive experience that impresses.
+          </p>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-center gap-3 text-muted-foreground">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Ideal for up to 15 guests</span>
+            </li>
+            <li class="flex items-center gap-3 text-muted-foreground">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Private & secluded atmosphere</span>
+            </li>
+            <li class="flex items-center gap-3 text-muted-foreground">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Perfect for business meetings</span>
+            </li>
+            <li class="flex items-center gap-3 text-muted-foreground">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Classic, sophisticated ambiance</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Catering Section -->
+  <section class="py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="grid gap-12 lg:gap-16 items-center max-w-6xl mx-auto lg:grid-cols-2">
+        <div class="overflow-hidden shadow-lg">
+          <Image
+            src={weddingTablesImage}
+            alt="Beautifully arranged catering setup with elegant place settings"
+            class="w-full h-full object-cover aspect-4/3"
+            widths={[640, 1024]}
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            quality={65}
+          />
+        </div>
+        <div>
+          <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl mb-6">
+            Full-Service Catering
+          </h2>
+          <p class="text-lg text-muted-foreground mb-4">
+            Our culinary team offers a diverse banquet menu featuring delicious options for breakfast, lunch, and dinner events. From elegant plated dinners to casual buffets, we'll work with you to create the perfect menu.
+          </p>
+          <p class="text-lg text-muted-foreground mb-6">
+            Pair your meal with selections from our award-winning wine collection and handcrafted spirits for a truly memorable dining experience.
+          </p>
+          <Button
+            href="/banquet-menu-2025-r1.pdf"
+            variant="gold"
+            size="lg"
+            class="inline-flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Download Banquet Menu
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wedding Teaser Section -->
+  <section class="bg-muted py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+          <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl mb-4">
+            Tie the Knot at Valiant Vineyards
+          </h2>
+          <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Say "I do" in the heart of South Dakota wine country. Our stunning venue provides the perfect backdrop for your wedding celebration.
+          </p>
+        </div>
+        <div class="grid gap-6 md:grid-cols-2">
+          <div class="overflow-hidden shadow-lg">
+            <Image
+              src={weddingSunsetImage}
+              alt="Bride and groom embracing at sunset"
+              class="w-full h-64 object-cover"
+              widths={[640, 1024]}
+              sizes="(max-width: 768px) 100vw, 50vw"
+              quality={65}
+            />
+          </div>
+          <div class="overflow-hidden shadow-lg">
+            <Image
+              src={weddingCakeImage}
+              alt="Beautiful rustic wedding cake with floral decorations"
+              class="w-full h-64 object-cover"
+              widths={[640, 1024]}
+              sizes="(max-width: 768px) 100vw, 50vw"
+              quality={65}
+            />
+          </div>
+        </div>
+        <div class="text-center mt-10">
+          <Button
+            href="/weddings/"
+            variant="gold"
+            size="lg"
+          >
+            Learn More About Weddings
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Policies Section -->
+  <section class="py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-4xl">
+        <h2 class="font-serif text-3xl font-semibold tracking-tight text-center sm:text-4xl mb-12">
+          Event Policies
+        </h2>
+
+        <div class="grid gap-8 md:grid-cols-2">
+          <!-- Pricing -->
+          <div class="border border-border bg-background p-6">
+            <h3 class="font-serif text-xl font-semibold mb-4 text-gold">Pricing & Fees</h3>
+            <ul class="space-y-3 text-muted-foreground text-base">
+              <li>All prices include 20% service charge</li>
+              <li>7.5% sales tax applied to all orders</li>
+              <li>Custom menus available upon request</li>
+              <li>Bar packages priced separately</li>
+            </ul>
+          </div>
+
+          <!-- Guest Count -->
+          <div class="border border-border bg-background p-6">
+            <h3 class="font-serif text-xl font-semibold mb-4 text-gold">Guest Count</h3>
+            <ul class="space-y-3 text-muted-foreground text-base">
+              <li>Final guest count due 7 days prior</li>
+              <li>We prepare for 5% over your guaranteed count</li>
+              <li>Billing based on guaranteed or actual count (whichever is greater)</li>
+            </ul>
+          </div>
+
+          <!-- Deposits -->
+          <div class="border border-border bg-background p-6">
+            <h3 class="font-serif text-xl font-semibold mb-4 text-gold">Deposits</h3>
+            <ul class="space-y-3 text-muted-foreground text-base">
+              <li>Deposit required to confirm your date</li>
+              <li>Deposits are non-refundable</li>
+              <li>Room fees must be paid in advance</li>
+              <li>Damages deducted from deposit</li>
+            </ul>
+          </div>
+
+          <!-- Payment -->
+          <div class="border border-border bg-background p-6">
+            <h3 class="font-serif text-xl font-semibold mb-4 text-gold">Payment</h3>
+            <ul class="space-y-3 text-muted-foreground text-base">
+              <li>All charges due on or before event date</li>
+              <li>Credit card guarantee required</li>
+              <li>We accept all major credit cards</li>
+              <li>Payment plans available for large events</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="bg-neutral-50 py-16 lg:py-20">
+    <div class="container mx-auto px-4 lg:px-8 text-center">
+      <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl mb-4">
+        Ready to Plan Your Event?
+      </h2>
+      <p class="text-foreground mb-8 max-w-xl mx-auto">
+        Contact us to discuss your vision and check availability. Our team is here to help make your event unforgettable.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <Button
+          href="tel:6056244500"
+          variant="gold"
+          size="lg"
+          class="inline-flex items-center gap-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          </svg>
+          (605) 624-4500
+        </Button>
+        <Button
+          href="/contact"
+          variant="gold-outline"
+          size="lg"
+        >
+          Contact Us Online
+        </Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

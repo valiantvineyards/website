@@ -1,0 +1,207 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import Button from "../components/Button.astro";
+import HeroImage from "../components/HeroImage.astro";
+import heroImage from "../assets/images/grains.webp";
+
+// Cocktail images
+import goldRushImage from "../assets/images/cocktail-sd-gold-rush.jpg";
+import cherryBourbonSourImage from "../assets/images/cocktail-cherry-bourbon-sour.webp";
+
+// Spirit label images
+import vodka from "../assets/images/spirits/vodka.webp";
+// import appleBrandy from "../assets/images/spirits/apple-brandy.webp"; // Discontinued - may return
+import ryeWhiskey from "../assets/images/spirits/rye-whiskey.webp";
+import ryeWhiskey5Year from "../assets/images/spirits/rye-whiskey-5-year.webp";
+import rum from "../assets/images/spirits/rum.webp";
+import straightBourbon from "../assets/images/spirits/straight-bourbon-whiskey.webp";
+
+const spirits = [
+  {
+    name: "South Dakota Club Vodka",
+    image: vodka,
+    category: "Vodka",
+    description: "Distilled from wine with spicy, peppery characteristics. An elegant and refined spirit with a sweet, viscous palate and round grainy complexity."
+  },
+  // Discontinued - may return
+  // {
+  //   name: "Apple Brandy",
+  //   image: appleBrandy,
+  //   category: "Brandy",
+  //   description: "Crafted from South Dakota apples using a natural approach. Aged two years in previously-used wine barrels, resulting in a unique and woody sipping brandy."
+  // },
+  {
+    name: "Clay Turner Rye Whiskey",
+    image: ryeWhiskey,
+    category: "Rye Whiskey",
+    description: "A gold medal winner featuring brown sugar and fig spiked with cinnamon and oak, offering a characterful finish."
+  },
+  {
+    name: "Clay Turner 5 Year Rye Whiskey",
+    image: ryeWhiskey5Year,
+    category: "Rye Whiskey • 108 Proof",
+    description: "Barrel-proof rye without chill filtration. Uncut and bottled directly from the barrels at their natural proof level."
+  },
+  {
+    name: "Clay Turner Rum",
+    image: rum,
+    category: "Rum",
+    description: "Produced since 2014 using sugar cane molasses, this gold medal-winning rum was mellowed to perfection in small oak casks. Rich aroma with soft nuances of vanilla and caramel."
+  },
+  {
+    name: "Clay Turner 5 Year Straight Bourbon",
+    image: straightBourbon,
+    category: "Bourbon • Aged 5 Years",
+    description: "A gold medal bourbon praised for its silky barrel influence. Full flavored and bold, yet restrained."
+  }
+];
+---
+
+<BaseLayout title="Distillery" description="Discover our craft spirits and distillery offerings at Stone Faces Distillery, part of Valiant Vineyards.">
+  <!-- Hero Section -->
+  <section class="relative">
+    <div class="relative min-h-[50vh] lg:min-h-[60vh] flex items-center justify-center py-24 bg-neutral-900">
+      <HeroImage
+        src={heroImage}
+        alt="Golden barley grains"
+        position="top"
+        quality={65}
+      />
+      <div class="container relative mx-auto px-4 lg:px-8 text-center">
+        <div class="inline-block bg-black/50 px-8 py-6">
+          <h1 class="font-serif text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+            Craft Spirits
+          </h1>
+          <p class="mt-4 font-serif text-xl text-white font-medium max-w-2xl mx-auto lg:text-2xl">
+            Handcrafted spirits from grain to glass
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Introduction -->
+  <section class="py-12 lg:py-16">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="text-gold font-semibold tracking-widest uppercase mb-4">Stone Faces Distillery</p>
+        <p class="text-lg text-muted-foreground">
+          At Stone Faces Distillery, we craft premium spirits using traditional methods and locally-sourced ingredients. From smooth vodka to aged whiskeys, each bottle represents our commitment to quality and the spirit of South Dakota.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Spirits Grid -->
+  <section class="pb-16 lg:pb-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:gap-10">
+        {spirits.map((spirit) => (
+          <article class="group flex flex-col bg-white border border-neutral-200 shadow-md overflow-hidden transition-shadow hover:shadow-xl">
+            <div class="py-6 px-4 flex items-center justify-center bg-neutral-50">
+              <Image
+                src={spirit.image}
+                alt={spirit.name}
+                class="h-48 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                widths={[200, 400]}
+                sizes="200px"
+                quality={85}
+              />
+            </div>
+            <div class="p-6 flex flex-col grow">
+              <p class="text-sm font-medium text-gold uppercase tracking-wide mb-1">
+                {spirit.category}
+              </p>
+              <h2 class="font-serif text-xl font-semibold text-foreground mb-3">
+                {spirit.name}
+              </h2>
+              <p class="text-muted-foreground text-base leading-relaxed">
+                {spirit.description}
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Cocktail Recipes -->
+  <section class="py-16 lg:py-20 bg-neutral-50">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="text-center mb-12">
+        <p class="text-gold font-semibold tracking-widest uppercase mb-4">Cocktail Recipes</p>
+        <h2 class="font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          Crafted to Enjoy
+        </h2>
+        <p class="mt-4 text-muted-foreground max-w-2xl mx-auto">
+          Discover delicious ways to enjoy our spirits at home with these signature cocktail recipes.
+        </p>
+      </div>
+      <div class="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
+        <a href="/recipes/gold-rush" class="group block bg-white border border-neutral-200 shadow-md overflow-hidden transition-shadow hover:shadow-xl">
+          <div class="aspect-4/3 overflow-hidden">
+            <Image
+              src={goldRushImage}
+              alt="South Dakota Gold Rush cocktail"
+              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              widths={[400, 600]}
+              sizes="(max-width: 768px) 100vw, 400px"
+              quality={80}
+            />
+          </div>
+          <div class="p-6">
+            <p class="text-sm font-medium text-gold uppercase tracking-wide mb-1">
+              Clay Turner Bourbon
+            </p>
+            <h3 class="font-serif text-xl font-semibold text-foreground mb-2 group-hover:text-gold transition-colors">
+              South Dakota Gold Rush
+            </h3>
+            <p class="text-muted-foreground text-sm">
+              A refreshing twist on the classic Gold Rush with local honey and fresh lemon.
+            </p>
+          </div>
+        </a>
+        <a href="/recipes/cherry-bourbon-sour-cocktail" class="group block bg-white border border-neutral-200 shadow-md overflow-hidden transition-shadow hover:shadow-xl">
+          <div class="aspect-4/3 overflow-hidden">
+            <Image
+              src={cherryBourbonSourImage}
+              alt="Cherry Bourbon Sour cocktail"
+              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              widths={[400, 600]}
+              sizes="(max-width: 768px) 100vw, 400px"
+              quality={80}
+            />
+          </div>
+          <div class="p-6">
+            <p class="text-sm font-medium text-gold uppercase tracking-wide mb-1">
+              Clay Turner 5 Year Bourbon
+            </p>
+            <h3 class="font-serif text-xl font-semibold text-foreground mb-2 group-hover:text-gold transition-colors">
+              Cherry Bourbon Sour
+            </h3>
+            <p class="text-muted-foreground text-sm">
+              A sophisticated sour with bourbon-marinated cherries and silky egg white.
+            </p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="bg-neutral-900 py-16 lg:py-20">
+    <div class="container mx-auto px-4 lg:px-8 text-center">
+      <h2 class="font-serif text-3xl font-semibold tracking-tight text-white sm:text-4xl mb-4">
+        Taste Our Spirits
+      </h2>
+      <p class="text-neutral-300 max-w-2xl mx-auto mb-8">
+        Visit our tasting room in Vermillion, South Dakota to sample our full lineup of craft spirits. Our knowledgeable staff will guide you through flights and cocktails.
+      </p>
+      <Button href="/tasting-room" variant="gold" size="lg">
+        Plan Your Visit
+      </Button>
+    </div>
+  </section>
+</BaseLayout>
+

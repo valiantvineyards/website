@@ -1,0 +1,324 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/Button.astro";
+import HeroImage from "../components/HeroImage.astro";
+import heroImage from "../assets/images/dogs-in-cellar.webp";
+import { contact, address, hours } from "../data/site-info";
+
+// Mapbox Static Map configuration
+const MAPBOX_TOKEN = import.meta.env.MAPBOX_ACCESS_TOKEN;
+const mapboxUrl = MAPBOX_TOKEN
+  ? `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-l+996F00(${address.coordinates.lon},${address.coordinates.lat})/${address.coordinates.lon},${address.coordinates.lat},14,0/600x400@2x?access_token=${MAPBOX_TOKEN}`
+  : null;
+---
+
+<BaseLayout title="Contact" description="Get in touch with Valiant Vineyards. We'd love to hear from you about visits, events, or any questions.">
+  <!-- Hero Section -->
+  <section class="relative">
+    <div class="relative min-h-[40vh] md:min-h-[50vh] lg:min-h-[80vh] flex items-center justify-center py-24 bg-neutral-900">
+      <HeroImage
+        src={heroImage}
+        alt="Luna and Rizzo, the official winery dogs of Valiant Vineyards, sitting in front of oak barrels"
+        position="top"
+        quality={40}
+      />
+      <div class="container relative mx-auto px-4 lg:px-8 text-center">
+        <div class="inline-block bg-black/50 px-8 py-6">
+          <h1 class="font-serif text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+            Get in Touch
+          </h1>
+          <p class="mt-4 font-serif text-xl text-white font-medium max-w-2xl mx-auto lg:text-2xl">
+            We'd love to hear from you
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content: Form + Info -->
+  <section class="py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-6xl">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
+
+          <!-- Contact Form -->
+          <div>
+            <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl mb-2">
+              Send Us a Message
+            </h2>
+            <p class="text-muted-foreground mb-8">
+              Questions about visiting, hosting an event, or our wines and spirits? Drop us a line.
+            </p>
+
+            <form
+              id="contact-form"
+              action="/api/contact"
+              method="POST"
+              class="space-y-6"
+            >
+              <!-- Honeypot field - hidden from real users -->
+              <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" />
+
+              <!-- Name -->
+              <div>
+                <label for="name" class="block text-sm font-medium mb-2">
+                  Name <span class="text-red-600" aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  required
+                  aria-required="true"
+                  autocomplete="name"
+                  class="w-full rounded-md border border-neutral-300 bg-white px-4 py-3 text-base transition-colors focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+                  placeholder="Your name"
+                />
+              </div>
+
+              <!-- Email -->
+              <div>
+                <label for="email" class="block text-sm font-medium mb-2">
+                  Email <span class="text-red-600" aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  aria-required="true"
+                  autocomplete="email"
+                  class="w-full rounded-md border border-neutral-300 bg-white px-4 py-3 text-base transition-colors focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+                  placeholder="you@example.com"
+                />
+              </div>
+
+              <!-- Phone -->
+              <div>
+                <label for="phone" class="block text-sm font-medium mb-2">
+                  Phone <span class="text-muted-foreground font-normal">(optional)</span>
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  autocomplete="tel"
+                  aria-describedby="phone-hint"
+                  class="w-full rounded-md border border-neutral-300 bg-white px-4 py-3 text-base transition-colors focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+                  placeholder="(555) 123-4567"
+                />
+                <p id="phone-hint" class="mt-1.5 text-sm text-muted-foreground">
+                  Include if you'd like a callback
+                </p>
+              </div>
+
+              <!-- Message -->
+              <div>
+                <label for="message" class="block text-sm font-medium mb-2">
+                  Message <span class="text-red-600" aria-hidden="true">*</span>
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  required
+                  aria-required="true"
+                  rows={5}
+                  class="w-full rounded-md border border-neutral-300 bg-white px-4 py-3 text-base transition-colors focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20 resize-y"
+                  placeholder="How can we help you?"
+                ></textarea>
+              </div>
+
+              <!-- Newsletter Signup -->
+              <div class="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  id="subscribe"
+                  name="subscribe"
+                  value="yes"
+                  class="mt-0.5 h-5 w-5 rounded border-neutral-300 accent-gold focus:ring-gold/20"
+                />
+                <label for="subscribe" class="text-sm text-muted-foreground">
+                  Sign me up for news and updates from Valiant Vineyards Winery & Distillery.
+                  You can unsubscribe at any time. View our <a href="/privacy-policy/" class="text-gold hover:underline">Privacy Policy</a>.
+                </label>
+              </div>
+
+              <!-- Cloudflare Turnstile -->
+              <div class="cf-turnstile" data-sitekey="0x4AAAAAACHr1kbpPYRV4EtW" data-theme="light" aria-label="Security verification"></div>
+
+              <!-- Submit Button -->
+              <div>
+                <Button type="submit" variant="gold" size="lg" class="w-full sm:w-auto" id="contact-submit">
+                  Send Message
+                </Button>
+              </div>
+
+              <!-- Form feedback message -->
+              <div id="contact-message" class="hidden rounded-md p-4" aria-live="assertive" aria-atomic="true">
+                <p id="contact-message-text"></p>
+              </div>
+            </form>
+          </div>
+
+          <!-- Contact Info -->
+          <div class="lg:pl-8">
+            <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl mb-8">
+              Visit Us
+            </h2>
+
+            <address class="not-italic">
+              <!-- Address -->
+              <div class="mb-8">
+                <h3 class="font-semibold text-lg mb-2">Location</h3>
+                <a
+                  href={address.googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-muted-foreground hover:text-gold transition-colors"
+                >
+                  {address.street}<br />
+                  {address.city}, {address.state} {address.zip}
+                </a>
+              </div>
+
+              <!-- Phone & Email -->
+              <div class="mb-8">
+                <h3 class="font-semibold text-lg mb-2">Contact</h3>
+                <div class="space-y-1">
+                  <p>
+                    <a
+                      href={`tel:${contact.phone.replace(/[^0-9]/g, '')}`}
+                      class="text-muted-foreground hover:text-gold transition-colors"
+                    >
+                      {contact.phone}
+                    </a>
+                  </p>
+                  <p>
+                    <a
+                      href={`mailto:${contact.email}`}
+                      class="text-muted-foreground hover:text-gold transition-colors"
+                    >
+                      {contact.email}
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </address>
+
+            <!-- Hours -->
+            <div class="mb-8">
+              <h3 class="font-semibold text-lg mb-3">Tasting Room Hours</h3>
+              <dl class="divide-y divide-neutral-200 text-sm">
+                {hours.tastingRoom.map((item) => (
+                  <div class="flex justify-between items-center py-2">
+                    <dt class="font-medium">{item.days}</dt>
+                    <dd class="text-muted-foreground">{item.hours}</dd>
+                  </div>
+                ))}
+              </dl>
+              {hours.note && (
+                <p class="mt-4 text-sm text-muted-foreground italic">
+                  {hours.note}
+                </p>
+              )}
+            </div>
+
+            <!-- Map Section -->
+            <div class="overflow-hidden shadow-md border border-neutral-200">
+              {mapboxUrl ? (
+                <a
+                  href={address.googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="block relative group transform-none"
+                >
+                  <img
+                    src={mapboxUrl}
+                    alt={`Map showing Valiant Vineyards location at ${address.street}, ${address.city}, ${address.state}`}
+                    width="600"
+                    height="400"
+                    class="w-full h-auto"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div class="absolute inset-0 bg-charcoal/0 group-hover:bg-charcoal/20 transition-colors flex items-center justify-center">
+                    <span class="opacity-0 group-hover:opacity-100 transition-opacity bg-gold text-white px-4 py-2 rounded-md text-sm font-medium">
+                      Open in Google Maps
+                    </span>
+                  </div>
+                </a>
+              ) : (
+                <div class="flex flex-col items-center justify-center p-8 text-center bg-neutral-100" style="min-height: 250px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gold mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <p class="text-sm text-muted-foreground mb-1">{address.street}</p>
+                  <p class="text-sm text-muted-foreground">{address.city}, {address.state} {address.zip}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cloudflare Turnstile Script -->
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+  <script>
+    // Contact form handler
+    const form = document.getElementById('contact-form') as HTMLFormElement;
+    const messageContainer = document.getElementById('contact-message') as HTMLElement;
+    const messageText = document.getElementById('contact-message-text') as HTMLElement;
+    const submitButton = document.getElementById('contact-submit') as HTMLButtonElement;
+
+    if (form && messageContainer && messageText && submitButton) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Client-side Turnstile check
+        const turnstileResponse = form.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement;
+        if (!turnstileResponse || !turnstileResponse.value) {
+          showError('Please complete the security check before submitting.');
+          return;
+        }
+
+        // Disable button and show loading state
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sending...';
+
+        try {
+          const formData = new FormData(form);
+          const response = await fetch('/api/contact', {
+            method: 'POST',
+            body: formData,
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            // Redirect to thank you page
+            window.location.href = '/thank-you';
+          } else {
+            showError(result.error || 'Something went wrong. Please try again.');
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+          }
+        } catch (error) {
+          showError('Failed to send message. Please try again.');
+          submitButton.disabled = false;
+          submitButton.textContent = originalText;
+        }
+      });
+
+      function showError(message: string) {
+        messageContainer.classList.remove('hidden', 'bg-green-50', 'text-green-700');
+        messageContainer.classList.add('bg-red-50', 'text-red-700');
+        messageText.textContent = message;
+      }
+    }
+  </script>
+</BaseLayout>

@@ -1,0 +1,202 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/Button.astro";
+import { Image } from "astro:assets";
+import HeroImage from "../components/HeroImage.astro";
+import paintingImage from "../assets/images/painting-of-winery.webp";
+import eldonImage from "../assets/images/eldon-green-background.jpg";
+---
+
+<BaseLayout title="Our Story" description="Learn about Valiant Vineyards - our history, passion for winemaking, and commitment to crafting exceptional wines and spirits.">
+  <!-- Hero Section -->
+  <section class="relative">
+    <div class="relative min-h-[60vh] flex items-center justify-center py-24 bg-neutral-900">
+      <HeroImage
+        src={paintingImage}
+        alt="Watercolor painting of Valiant Vineyards winery overlooking the vineyard and Missouri River valley"
+        widths={[640, 1024, 1536, 2048]}
+        sizes="100vw"
+        quality={60}
+      />
+      <div class="container relative mx-auto px-4 lg:px-8 text-center">
+        <div class="inline-block bg-black/50 px-8 py-6">
+          <h1 class="font-serif text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+            Pioneers of South Dakota Wine
+          </h1>
+          <p class="mt-4 font-serif text-xl text-white font-medium max-w-2xl mx-auto lg:text-2xl">
+            The first winery in South Dakota. A family legacy six generations deep.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Opening Statement -->
+  <section class="py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="text-xl leading-relaxed text-foreground font-light">
+          Every bottle tells a story. Ours spans six generations—from a German immigrant's
+          dream in 1850 to the legislative act that made South Dakota wine possible.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Heritage Section -->
+  <section class="bg-neutral-100 py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+        <div>
+          <h2 class="font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            A Heritage Rooted in Tradition
+          </h2>
+          <div class="mt-8 space-y-6 text-lg text-muted-foreground">
+            <p>
+              The Nygaard family's winemaking heritage traces back to <strong class="text-foreground">1850</strong>, when
+              Christian F. Gossmann immigrated from Germany to the American Midwest, bringing centuries of
+              Old World winemaking knowledge with him.
+            </p>
+            <p>
+              Fast forward to <strong class="text-foreground">1961</strong>. Eldon Nygaard, working from the family
+              farm in Turner County, South Dakota, created his first wine using mulberries from their land.
+              It was an experiment born from curiosity and family tradition—one that would eventually
+              change South Dakota's agricultural landscape.
+            </p>
+          </div>
+        </div>
+
+        <div class="order-first lg:order-last">
+          <figure>
+            <div class="overflow-hidden shadow-xl">
+              <Image
+                src={eldonImage}
+                alt="Eldon Nygaard, founder of Valiant Vineyards and pioneer of South Dakota winemaking"
+                class="w-full h-full object-cover"
+                widths={[600, 800, 1000]}
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                quality={80}
+              />
+            </div>
+            <figcaption class="mt-3 text-center text-sm text-muted-foreground">
+              Eldon Nygaard, Founder & CEO
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Turning Point -->
+  <section class="py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-4xl">
+        <h2 class="font-serif text-3xl font-semibold tracking-tight text-center sm:text-4xl">
+          Making History
+        </h2>
+
+        <div class="mt-12 space-y-12">
+          <!-- 1993 -->
+          <div class="border-l-4 border-gold pl-6">
+            <span class="text-sm font-semibold uppercase tracking-wider text-gold">1993</span>
+            <h3 class="mt-2 font-serif text-2xl font-semibold">Testing the Soil</h3>
+            <p class="mt-4 text-lg text-muted-foreground">
+              The family planted experimental grape plots, partnering with South Dakota State University's
+              Dr. Ann Fennel to identify cold-hardy varieties that could survive brutal Midwest winters.
+              Among them: the <em>Valiant</em> grape, developed by Dr. Ronald Peterson—the variety that
+              would eventually give the vineyard its name.
+            </p>
+          </div>
+
+          <!-- 1996 Legislation -->
+          <div class="border-l-4 border-gold pl-6">
+            <span class="text-sm font-semibold uppercase tracking-wider text-gold">1996</span>
+            <h3 class="mt-2 font-serif text-2xl font-semibold">Writing the Law</h3>
+            <p class="mt-4 text-lg text-muted-foreground">
+              Recognizing the commercial viability of wine grapes in South Dakota, Eldon—a political
+              science professor at the University of South Dakota—did something remarkable. He drafted
+              the state's enabling legislation for farm wineries. The Nygaard family testified before
+              the state legislature, and on <strong class="text-foreground">July 1, 1996</strong>,
+              the Farm Winery Act became law.
+            </p>
+          </div>
+
+          <!-- First License -->
+          <div class="border-l-4 border-gold pl-6">
+            <span class="text-sm font-semibold uppercase tracking-wider text-gold">July 1996</span>
+            <h3 class="mt-2 font-serif text-2xl font-semibold">License BW-SD-1</h3>
+            <p class="mt-4 text-lg text-muted-foreground">
+              Valiant Vineyards received South Dakota's first commercial bonded winery license.
+              They didn't just become the state's first winery—they created the industry itself.
+            </p>
+          </div>
+
+          <!-- 2000 Facility -->
+          <div class="border-l-4 border-gold pl-6">
+            <span class="text-sm font-semibold uppercase tracking-wider text-gold">2000</span>
+            <h3 class="mt-2 font-serif text-2xl font-semibold">Building the Dream</h3>
+            <p class="mt-4 text-lg text-muted-foreground">
+              The family completed a 15,000-square-foot facility at Buffalo Run Resort in Vermillion.
+              What started as a mulberry wine experiment on a Turner County farm had grown into a
+              full-fledged destination winery.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Family Legacy -->
+  <section class="bg-neutral-100 py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center">
+        <h2 class="font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          A Family Affair
+        </h2>
+        <div class="mt-8 space-y-6 text-lg text-muted-foreground">
+          <p>
+            From the very beginning, this has been a family endeavor. Eldon's children,
+            Leif and Jeanette, grew up working in the vineyard—pruning vines, harvesting grapes,
+            and helping with bottling runs.
+          </p>
+          <p>
+            By age eighteen, Leif had become a <strong class="text-foreground">sixth-generation American winemaker</strong>.
+            Today, he leads Stone Faces Distillery, expanding the family's craft to include vodka,
+            whiskey, apple brandy, rum, and bourbon—all made with the same dedication to quality
+            and local ingredients that defines Valiant Vineyards.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Today Section -->
+  <section class="py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center">
+        <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">
+          Today & Tomorrow
+        </h2>
+        <p class="mt-8 text-lg leading-relaxed text-muted-foreground">
+          Valiant Vineyards and Stone Faces Distillery continue to operate at Buffalo Run Resort,
+          offering award-winning wines, small-batch spirits, a cozy bed & breakfast, and space
+          for private celebrations. We're still a family operation, still experimenting with new
+          varietals and techniques, and still proud to carry forward a legacy that spans six
+          generations and two continents.
+        </p>
+        <p class="mt-6 text-lg leading-relaxed text-muted-foreground">
+          We didn't just write South Dakota wine history. We're still writing it.
+        </p>
+
+        <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <Button href="/tasting-room/" variant="gold" size="lg">
+            Visit Us
+          </Button>
+          <Button href="/wines/" variant="gold-outline" size="lg">
+            Explore Our Wines
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,66 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  image: ImageMetadata;
+  alt: string;
+  height?: "sm" | "md" | "lg" | "full";
+  overlay?: boolean;
+  overlayOpacity?: number;
+  position?: string;
+  class?: string;
+}
+
+const {
+  image,
+  alt,
+  height = "md",
+  overlay = false,
+  overlayOpacity = 40,
+  position = "center",
+  class: extra = "",
+} = Astro.props;
+
+const heightClasses = {
+  sm: "h-[30vh] min-h-[240px]",
+  md: "h-[50vh] min-h-[360px]",
+  lg: "h-[70vh] min-h-[480px]",
+  full: "h-screen",
+};
+---
+
+<section class:list={["relative w-full overflow-hidden", heightClasses[height], extra]}>
+  <Image
+    src={image}
+    alt={alt}
+    widths={[640, 960, 1280, 1920, 2560]}
+    sizes="100vw"
+    loading="eager"
+    class="h-full w-full object-cover"
+    style={`object-position: ${position}`}
+  />
+
+  {overlay && (
+    <div
+      class="absolute inset-0 bg-black"
+      style={`opacity: ${overlayOpacity / 100}`}
+    />
+  )}
+
+  <slot />
+</section>
+
+<style>
+  /* Content slot positioning - allows for text overlays */
+  section :global(.hero-content) {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+  }
+</style>

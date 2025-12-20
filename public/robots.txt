@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /health/
+Disallow: /tasting-room-sign-up/
+
+Sitemap: https://valiantvineyards.us/sitemap-index.xml

@@ -1,0 +1,315 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/Button.astro";
+import { Image } from "astro:assets";
+import HeroImage from "../components/HeroImage.astro";
+import heroImage from "../assets/images/wine-pouring-into-glass.webp";
+import tastingRoomBar from "../assets/images/tasting-room-bar.jpg";
+import bloodyMaryImage from "../assets/images/monster-bloody-mary.jpg";
+import { hours, contact } from "../data/site-info";
+---
+
+<BaseLayout title="Tasting Room" description="Visit our tasting room to sample wines, spirits, and craft cocktails at Valiant Vineyards. South Dakota's first winery.">
+  <!-- Hero Section -->
+  <section class="relative">
+    <div class="relative min-h-[60vh] xl:min-h-[75vh] flex items-center justify-center py-24 bg-neutral-900">
+      <HeroImage
+        src={heroImage}
+        alt="Wine being poured into glasses at Valiant Vineyards tasting room"
+        widths={[640, 1024, 1536, 2048]}
+        sizes="100vw"
+        quality={90}
+      />
+      <div class="container relative mx-auto px-4 lg:px-8 text-center">
+        <div class="inline-block bg-black/50 px-8 py-6">
+          <h1 class="font-serif text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+            A Taste of South Dakota
+          </h1>
+          <p class="mt-4 font-serif text-xl text-white font-medium max-w-2xl mx-auto lg:text-2xl">
+            Where craftsmanship meets flavor in every pour
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Experience Section -->
+  <section class="py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center">
+        <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl mb-4">
+          South Dakota's First Winery
+        </h2>
+        <p class="text-lg text-muted-foreground italic mb-8">
+          For over 20 years, we've been welcoming visitors from across the state and beyond to experience award-winning wines and spirits.
+        </p>
+      </div>
+
+      <div class="mx-auto max-w-4xl">
+        <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+          <!-- Wines -->
+          <div class="text-center md:text-left">
+            <h3 class="font-serif text-2xl font-semibold text-gold mb-4">
+              Wine Tastings
+            </h3>
+            <p class="text-lg leading-relaxed text-foreground">
+              Sample our collection of award-winning wines, from bold reds to refreshing whites. Our knowledgeable staff will guide you through each selection, sharing the stories behind our varietals and winemaking process.
+            </p>
+          </div>
+
+          <!-- Spirits -->
+          <div class="text-center md:text-left">
+            <h3 class="font-serif text-2xl font-semibold text-gold mb-4">
+              Stone Faces Distillery
+            </h3>
+            <p class="text-lg leading-relaxed text-foreground">
+              Discover our premium spirits — from smooth vodka to bold bourbon, crisp rye whiskey, warm apple brandy, and handcrafted rum. Each spirit is distilled in small batches with care.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-12 p-8 bg-neutral-50 text-center">
+          <p class="text-lg leading-relaxed text-foreground">
+            We encourage guests to explore both our wines and spirits during their visit. Enjoy a tasting flight, sip a glass while taking in the view, or indulge in bottle service. Whether you're a seasoned connoisseur or new to craft beverages, our team is here to help you find your new favorite.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What to Expect -->
+  <section class="bg-secondary py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-5xl">
+        <h2 class="font-serif text-3xl font-semibold tracking-tight text-center text-secondary-foreground sm:text-4xl mb-12">
+          What to Expect
+        </h2>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Walk-ins Welcome -->
+          <div class="bg-secondary-foreground/5 p-6 text-center border border-secondary-foreground/10">
+            <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-gold/10 flex items-center justify-center">
+              <svg class="w-6 h-6 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </div>
+            <h3 class="font-semibold text-secondary-foreground mb-2">Walk-Ins Welcome</h3>
+            <p class="text-base text-secondary-foreground/80">
+              No reservation needed during regular hours. Just stop by!
+            </p>
+          </div>
+
+          <!-- Expert Guidance -->
+          <div class="bg-secondary-foreground/5 p-6 text-center border border-secondary-foreground/10">
+            <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-gold/10 flex items-center justify-center">
+              <svg class="w-6 h-6 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <h3 class="font-semibold text-secondary-foreground mb-2">Expert Guidance</h3>
+            <p class="text-base text-secondary-foreground/80">
+              Our staff will walk you through each tasting with background on our wines and spirits.
+            </p>
+          </div>
+
+          <!-- Gift Shop -->
+          <div class="bg-secondary-foreground/5 p-6 text-center border border-secondary-foreground/10">
+            <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-gold/10 flex items-center justify-center">
+              <svg class="w-6 h-6 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+              </svg>
+            </div>
+            <h3 class="font-semibold text-secondary-foreground mb-2">Gift Shop</h3>
+            <p class="text-base text-secondary-foreground/80">
+              Browse locally made products and wine accessories to take home.
+            </p>
+          </div>
+
+          <!-- Scenic Views -->
+          <div class="bg-secondary-foreground/5 p-6 text-center border border-secondary-foreground/10">
+            <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-gold/10 flex items-center justify-center">
+              <svg class="w-6 h-6 text-gold" fill="currentColor" viewBox="0 0 512 512">
+                <path d="M96 64c0-17.7 14.3-32 32-32l32 0c17.7 0 32 14.3 32 32l0 16-96 0 0-16zM59.6 158c4.8-26.6 28-46 55.1-46l85.3 0c13.3 0 24 10.7 24 24l0 24 64 0 0-24c0-13.3 10.7-24 24-24l85.3 0c27.1 0 50.3 19.4 55.1 46l5 27.3c3.6 19.9 10.8 39 21.2 56.4l2.6 4.4c20.1 33.6 30.8 72 30.8 111.1l0 66.8c0 30.9-25.1 56-56 56l-112 0c-30.9 0-56-25.1-56-56l0-136-64 0 0 136c0 30.9-25.1 56-56 56L56 480c-30.9 0-56-25.1-56-56l0-66.8C0 318 10.6 279.6 30.8 246l2.6-4.4c10.4-17.4 17.6-36.5 21.2-56.4l5-27.3zm55.1 2c-3.9 0-7.2 2.8-7.9 6.6l-5 27.3C97.2 219.5 88 244 74.6 266.4l-2.6 4.4C56.3 296.9 48 326.7 48 357.2L48 424c0 4.4 3.6 8 8 8l112 0c4.4 0 8-3.6 8-8l0-264-61.3 0zm282.6 0l-61.3 0 0 264c0 4.4 3.6 8 8 8l112 0c4.4 0 8-3.6 8-8l0-66.8c0-30.4-8.3-60.3-23.9-86.4l-2.6-4.4c-13.4-22.3-22.6-46.9-27.3-72.5l-5-27.3c-.7-3.8-4-6.6-7.9-6.6zM352 32l32 0c17.7 0 32 14.3 32 32l0 16-96 0 0-16c0-17.7 14.3-32 32-32z"/>
+              </svg>
+            </div>
+            <h3 class="font-semibold text-secondary-foreground mb-2">Scenic Views</h3>
+            <p class="text-base text-secondary-foreground/80">
+              Relax and enjoy the peaceful South Dakota countryside.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Plan Your Visit -->
+  <section class="py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="grid lg:grid-cols-2 gap-8 lg:gap-16 xl:gap-24 items-center">
+          <!-- Image -->
+          <div class="overflow-hidden shadow-lg">
+            <Image
+              src={tastingRoomBar}
+              alt="Valiant Vineyards tasting room bar"
+              class="w-full h-auto"
+              widths={[640, 1024]}
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              quality={85}
+            />
+          </div>
+
+          <!-- Hours Content -->
+          <div>
+            <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl mb-8">
+              Hours & Reservations
+            </h2>
+
+            <dl class="space-y-3 text-base">
+              {hours.tastingRoom.map((item) => (
+                <div class="flex justify-between items-center border-b border-neutral-200 pb-3">
+                  <dt class="font-medium">{item.days}</dt>
+                  <dd class="text-muted-foreground">{item.hours}</dd>
+                </div>
+              ))}
+            </dl>
+
+            {hours.note && (
+              <p class="mt-6 text-sm text-muted-foreground italic">
+                {hours.note}
+              </p>
+            )}
+
+            <div class="mt-8 p-6 bg-neutral-50">
+              <h3 class="font-semibold mb-2">Reservations</h3>
+              <p class="text-foreground mb-4">
+                Walk-ins are welcome during regular hours. For appointments outside normal hours or to arrange a private tasting, please contact us.
+              </p>
+              <div class="flex flex-col sm:flex-row gap-3">
+                <a
+                  href={`tel:${contact.phone.replace(/[^0-9]/g, '')}`}
+                  class="inline-flex items-center justify-center text-gold hover:text-gold/80 font-medium"
+                >
+                  <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  {contact.phone}
+                </a>
+                <a
+                  href={`mailto:${contact.email}`}
+                  class="inline-flex items-center justify-center text-gold hover:text-gold/80 font-medium"
+                >
+                  <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  {contact.email}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Event: Monster Bloody Mary -->
+  <section class="bg-neutral-50 py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="grid sm:grid-cols-2 gap-8 lg:gap-16 xl:gap-24 items-center">
+          <!-- Content -->
+          <div class="order-2 sm:order-1">
+            <p class="text-sm font-semibold uppercase tracking-wider text-gold mb-2">Featured Event</p>
+            <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl mb-6">
+              Monster Bloody Mary Weekends
+            </h2>
+            <p class="text-lg leading-relaxed text-foreground mb-6">
+              Join us on select weekends for our legendary Monster Bloody Marys — towering creations that have become a fan favorite. Made with our own Stone Faces spirits, these aren't your average brunch cocktails.
+            </p>
+            <p class="text-foreground italic mb-8">
+              Available Saturdays and Sundays during featured weekends. Check our news section for upcoming dates.
+            </p>
+            <Button href="/events/" variant="gold-outline" size="lg">
+              See Upcoming Events
+            </Button>
+          </div>
+
+          <!-- Image -->
+          <div class="order-1 sm:order-2 overflow-hidden shadow-lg sm:max-w-md sm:mx-auto">
+            <Image
+              src={bloodyMaryImage}
+              alt="Monster Bloody Mary cocktail at Valiant Vineyards"
+              class="w-full h-auto"
+              widths={[400, 640]}
+              sizes="(max-width: 1024px) 320px, 400px"
+              quality={85}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- More to Explore -->
+  <section class="py-16 lg:py-24">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center mb-12">
+        <h2 class="font-serif text-3xl font-semibold tracking-tight sm:text-4xl mb-4">
+          More to Explore
+        </h2>
+        <p class="text-lg text-muted-foreground">
+          Make the most of your visit to Valiant Vineyards
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto [&>*:last-child]:sm:col-span-2 [&>*:last-child]:sm:max-w-[calc(50%-0.75rem)] [&>*:last-child]:sm:mx-auto [&>*:last-child]:lg:col-span-1 [&>*:last-child]:lg:max-w-none">
+        <!-- Bed & Breakfast -->
+        <a href="/bed-and-breakfast/" class="group p-6 border border-border bg-background hover:border-gold hover:shadow-lg transition-all">
+          <h3 class="font-serif text-xl font-semibold group-hover:text-gold mb-2">Bed & Breakfast</h3>
+          <p class="text-muted-foreground text-base">
+            Extend your stay with an overnight in our cozy B&B nestled in the South Dakota countryside.
+          </p>
+        </a>
+
+        <!-- Events -->
+        <a href="/events/" class="group p-6 border border-border bg-background hover:border-gold hover:shadow-lg transition-all">
+          <h3 class="font-serif text-xl font-semibold group-hover:text-gold mb-2">Host an Event</h3>
+          <p class="text-muted-foreground text-base">
+            Plan your wedding, corporate gathering, or private party with our experienced event staff.
+          </p>
+        </a>
+
+        <!-- Live Music -->
+        <a href="/events/" class="group p-6 border border-border bg-background hover:border-gold hover:shadow-lg transition-all">
+          <h3 class="font-serif text-xl font-semibold group-hover:text-gold mb-2">Live Music</h3>
+          <p class="text-muted-foreground text-base">
+            We occasionally host live music events. Check our events for upcoming performances.
+          </p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="bg-secondary py-16 lg:py-20">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center">
+        <h2 class="font-serif text-3xl font-semibold tracking-tight text-secondary-foreground sm:text-4xl mb-4">
+          Ready to Visit?
+        </h2>
+        <p class="text-lg text-secondary-foreground/80 mb-8">
+          Stop in and let our wine experts walk you through a unique South Dakota wine experience.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button href="/contact/" variant="gold" size="lg">
+            Get Directions
+          </Button>
+          <Button href="/wines/" variant="white" size="lg">
+            Explore Our Wines
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
