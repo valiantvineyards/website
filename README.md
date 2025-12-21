@@ -33,6 +33,8 @@ The site is automatically built and deployed to Cloudflare Pages via GitHub Acti
 ## Project Structure
 
 ```
+.github/
+  workflows/     # GitHub Actions (CI/CD)
 src/
   assets/        # Images (optimized by Astro)
   components/    # Reusable components
