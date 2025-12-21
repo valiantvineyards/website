@@ -28,11 +28,13 @@ npm run preview
 
 ## Deployment
 
-The site is automatically built and deployed via Cloudflare Pages on pushes to the `main` branch.
+The site is automatically built and deployed to Cloudflare Pages via GitHub Actions on every push.
 
 ## Project Structure
 
 ```
+.github/
+  workflows/     # GitHub Actions (CI/CD)
 src/
   assets/        # Images (optimized by Astro)
   components/    # Reusable components
