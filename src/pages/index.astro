@@ -356,16 +356,16 @@ const pinnedStories = (await getCollection("stories", ({ data }) =>
         <!-- Hours Column -->
         <div class="border border-secondary-foreground/20 bg-secondary-foreground/5 p-8 backdrop-blur-sm">
           <h3 class="text-sm font-semibold uppercase tracking-wider text-white">Tasting Room Hours</h3>
-          <dl class="mt-6 space-y-4">
+          <dl class="mt-6 divide-y divide-secondary-foreground/10">
             {hours.tastingRoom.map((schedule) => (
-              <div class="flex justify-between border-b border-secondary-foreground/10 pb-3">
+              <div class="flex justify-between py-3">
                 <dt class="text-secondary-foreground/80">{schedule.days}</dt>
                 <dd class="font-medium text-secondary-foreground/80">{schedule.hours}</dd>
               </div>
             ))}
           </dl>
           {hours.note && (
-            <p class="mt-6 text-sm text-secondary-foreground/80">{hours.note}</p>
+            <p class="mt-6 text-sm text-secondary-foreground/80 italic">{hours.note}</p>
           )}
         </div>
 
