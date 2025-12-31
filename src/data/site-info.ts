@@ -6,14 +6,16 @@
 export const hours = {
   // Regular tasting room hours
   tastingRoom: [
-    { days: "Monday - Wednesday", hours: "By Appointment" },
-    { days: "Thursday", hours: "12pm - 4pm" },
-    { days: "Friday", hours: "12pm - 6pm" },
-    { days: "Saturday", hours: "11am - 6pm" },
-    { days: "Sunday", hours: "11am - 4pm" },
+    { days: "Monday", hours: "Closed" },
+    { days: "Tuesday", hours: "Closed" },
+    { days: "Wednesday", hours: "Closed" },
+    { days: "Thursday", hours: "Closed" },
+    { days: "Friday", hours: "12pm - 5pm" },
+    { days: "Saturday", hours: "12pm - 5pm" },
+    { days: "Sunday", hours: "12pm - 4pm" },
   ],
   // Optional: Add seasonal notes or closures
-  note: "Closed Christmas Eve, Christmas Day, New Year's Eve, and New Year's Day.", // e.g., "Closed Thanksgiving & Christmas"
+  note: "", // e.g., "Closed Thanksgiving & Christmas"
 };
 
 export const contact = {
