@@ -10,9 +10,9 @@ export const hours = {
     { days: "Tuesday", hours: "Closed" },
     { days: "Wednesday", hours: "Closed" },
     { days: "Thursday", hours: "Closed" },
-    { days: "Friday", hours: "12pm - 5pm" },
-    { days: "Saturday", hours: "12pm - 5pm" },
-    { days: "Sunday", hours: "12pm - 4pm" },
+    { days: "Friday", hours: "12 PM - 5 PM" },
+    { days: "Saturday", hours: "12 PM - 5 PM" },
+    { days: "Sunday", hours: "12 PM - 4 PM" },
   ],
   // Optional: Add seasonal notes or closures
   note: "", // e.g., "Closed Thanksgiving & Christmas"
