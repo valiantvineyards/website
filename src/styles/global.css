@@ -21,8 +21,9 @@
 /* Fallback font with adjusted metrics to minimize FOUT */
 @font-face {
   font-family: "Source Serif Fallback";
-  src: local("Times New Roman");
-  size-adjust: 104%;
+  src: local("Georgia"), local("Times New Roman");
+  font-display: swap;
+  size-adjust: 93%;
   ascent-override: 97%;
   descent-override: 27%;
   line-gap-override: 0%;
