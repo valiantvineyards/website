@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import PhotoSwipe from 'photoswipe';
   import 'photoswipe/style.css';
 
   interface Props {
@@ -12,7 +11,31 @@
 
   let { images, initialIndex = 0, open = $bindable(false), onclose }: Props = $props();
 
-  let pswp: PhotoSwipe | null = null;
+  let pswp: InstanceType<typeof import('photoswipe').default> | null = null;
+
+  // Cached PhotoSwipe module for instant access after preload
+  let PhotoSwipeModule: typeof import('photoswipe') | null = null;
+  let photoSwipePromise: Promise<typeof import('photoswipe')> | null = null;
+
+  function preloadPhotoSwipe() {
+    if (!photoSwipePromise) {
+      photoSwipePromise = import('photoswipe');
+      photoSwipePromise.then((mod) => {
+        PhotoSwipeModule = mod;
+      });
+    }
+    return photoSwipePromise;
+  }
+
+  onMount(() => {
+    // Preload PhotoSwipe during browser idle time for instant click response
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(() => preloadPhotoSwipe(), { timeout: 2000 });
+    } else {
+      // Fallback for Safari
+      setTimeout(() => preloadPhotoSwipe(), 100);
+    }
+  });
 
   $effect(() => {
     if (open && images.length > 0) {
@@ -20,7 +43,11 @@
     }
   });
 
-  function openPhotoSwipe() {
+  async function openPhotoSwipe() {
+    // Use cached module or await load (instant if preloaded)
+    const mod = PhotoSwipeModule ?? (await preloadPhotoSwipe());
+    const PhotoSwipe = mod.default;
+
     // Map images to PhotoSwipe format
     const items = images.map((img) => ({
       src: img.src,
