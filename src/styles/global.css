@@ -96,6 +96,11 @@
     transform: scaleY(0.97);
   }
 
+  /* Prevent double-scaling on nested inline elements within list items */
+  li span, li a {
+    transform: none;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
     @apply font-semibold tracking-tight;
