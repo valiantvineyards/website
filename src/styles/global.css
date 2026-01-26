@@ -101,6 +101,16 @@
     transform: none;
   }
 
+  /* Remove vertical scaling from prose content (MDX) */
+  .prose p, .prose span, .prose a, .prose li, .prose td, .prose th,
+  .prose dd, .prose dt {
+    transform: none;
+  }
+
+  .prose h1, .prose h2 {
+    transform: none;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
     @apply font-semibold tracking-tight;
