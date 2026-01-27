@@ -67,6 +67,8 @@ Required in Cloudflare Pages dashboard:
 - `TURNSTILE_SECRET_KEY` — CAPTCHA validation
 - `MAPBOX_ACCESS_TOKEN` — Static map on contact page (optional)
 
-## Git Commit Style
+## Git Workflow
 
-Do not include "Co-Authored-By" lines in commit messages.
+- **Never commit directly to `main`** — Always create a feature branch first. GitHub requires a PR for all merges into main; pushing directly is prohibited.
+- Do not include "Co-Authored-By" lines in commit messages.
+- Do not include "Created with Claude Code" or similar attribution lines in pull request descriptions.
