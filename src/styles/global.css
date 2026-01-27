@@ -85,40 +85,9 @@
     font-family: var(--font-sans);
   }
 
-  /* Sans-serif body text vertical scaling */
-  p, span, a, li, td, th, label, input, textarea, button, dd, dt {
-    transform: scaleY(0.95);
-    transform-origin: top;
-  }
-
-  /* Mobile nav sub-menu links need slightly less compression */
-  .mobile-nav-submenu a {
-    transform: scaleY(0.97);
-  }
-
-  /* Prevent double-scaling on nested inline elements within list items */
-  li span, li a {
-    transform: none;
-  }
-
-  /* Remove vertical scaling from prose content (MDX) */
-  .prose p, .prose span, .prose a, .prose li, .prose td, .prose th,
-  .prose dd, .prose dt {
-    transform: none;
-  }
-
-  .prose h1, .prose h2 {
-    transform: none;
-  }
-
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
     @apply font-semibold tracking-tight;
-  }
-
-  h1, h2 {
-    transform: scaleY(0.92);
-    transform-origin: top;
   }
 }
 
