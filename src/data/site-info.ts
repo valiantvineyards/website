@@ -40,3 +40,10 @@ export const social = {
   facebook: "https://www.facebook.com/valiant.vineyards",
   instagram: "https://www.instagram.com/valiant_vineyards/",
 };
+
+export const announcement = {
+  enabled: true,
+  text: "Bourbon, Beer & BBQ - Friday, Feb. 20th at 6:30 PM",
+  link: "https://aftontickets.com/bbb-2026",
+  linkText: "Get Your Tickets Online",
+};
