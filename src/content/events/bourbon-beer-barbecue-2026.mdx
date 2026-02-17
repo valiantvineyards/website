@@ -8,30 +8,65 @@ featuredImageAlt: "A selection of bourbon bottles and tasting glasses arranged o
 pinned: false
 draft: false
 ---
+import { Image } from 'astro:assets';
+import paul1 from './_images/paul-weidenbach-1.webp';
+import paul2 from './_images/paul-weidenbach-2.webp';
+import paul3 from './_images/paul-weidenbach-3.webp';
+import paul4 from './_images/paul-weidenbach-4.webp';
+import raffleBottles from './_images/bourbon-raffle-bottles.webp';
+import Button from '../../components/Button.astro';
 
 Join us for an indulgent winter evening of **bourbon, beer, BBQ, and wine** at Valiant Vineyards Winery & Distillery.
 
-**Bourbon, Beer & BBQ Bacchanal** is a celebration of bold flavors, featuring tastings of **over 50 bourbons and spirits**, local craft beer, and our own wines—paired with a full spread of slow-smoked barbecue and comfort-food classics.
+**Bourbon, Beer & BBQ Bacchanal** is a celebration of bold flavors—featuring tastings of **over 50 bourbons and spirits**, local craft beer, and our own wines, paired with a full spread of slow-smoked barbecue and comfort-food classics.
+
+To round out the night, enjoy live music from **Paul Weidenbach**, a musician and singer from Parkston. In 2017, he was inducted into the South Dakota Rock and Roll Hall of Fame as part of the Precious Cargo Band. Paul brings a smooth, easygoing set of favorites from the '70s and '80s, delivered with a rich baritone voice.
+
+<div class="grid grid-cols-2 gap-3 my-6">
+  <Image src={paul1} alt="Paul Weidenbach singing and playing acoustic guitar indoors" class="rounded-lg" />
+  <Image src={paul2} alt="Paul Weidenbach performing outdoors with guitar alongside a young fan" class="rounded-lg" />
+  <Image src={paul3} alt="Paul Weidenbach singing and playing acoustic guitar on stage" class="rounded-lg" />
+  <Image src={paul4} alt="Paul Weidenbach performing outside at Dimock Cheese" class="rounded-lg" />
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start my-6">
+<div>
+
+### Bourbon Raffle
+
+Every guest receives a raffle ticket at the door for a chance to win a premium bottle of bourbon. Three drawings will be held throughout the evening—one each hour:
+
+- **Clay Turner Barrel Proof 8 Year Straight Bourbon Whiskey**
+- **WhistlePig Snout-To-Tail Bourbon Aged 10 Years**
+- **Wood Family Reserve Multnomah Falls Lodge 100th Anniversary Bourbon**
+
+</div>
+<Image src={raffleBottles} alt="Three bourbon raffle prizes: Clay Turner Barrel Proof, WhistlePig 10 Year, and Wood Family Reserve" class="rounded-lg" />
+</div>
+
+### Event Details
 
 **Friday, February 20th, 2026**  
 **6:30 PM**  
-Valiant Vineyards Winery  
-1500 W Main Street, Vermillion
+Valiant Vineyards Winery & Distillery  
+1500 W Main Street, Vermillion, SD
 
 ### Menu Highlights
-- Maple bourbon smoked pork belly  
-- Smoked beef brisket & pulled pork  
-- Smoked spare ribs & chicken quarters  
-- BBQ glazed meatballs  
-- Cowboy beans, mac & cheese, dirty rice, coleslaw, potato salad  
-- Jalapeño cornbread  
-- Bourbon bread pudding  
+- Maple bourbon smoked pork belly
+- Smoked beef brisket & pulled pork
+- Smoked spare ribs & chicken quarters
+- BBQ glazed meatballs
+- Cowboy beans, mac & cheese, dirty rice, coleslaw, potato salad
+- Jalapeño cornbread
+- Bourbon bread pudding
 
 ### Tickets
 - **Tasting & Bacchanal:** $75
 - **Bacchanal only:** $45
 
-**[Get Your Tickets Online](https://aftontickets.com/bbb-2026)**
+<div class="text-center my-6">
+<Button href="https://aftontickets.com/bbb-2026" variant="gold" size="lg" class="gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18v3.5a2.5 2.5 0 0 1 0 5V18H3v-3.5a2.5 2.5 0 0 1 0-5Z"/><rect x="8" y="9" width="8" height="6"/></svg><span>Get Your Tickets Online</span></Button>
+</div>
 
 Space is limited—secure your spot today!
 Questions? Call [605-624-4500](tel:6056244500) or [contact us online](/contact/).
