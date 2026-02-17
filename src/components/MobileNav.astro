@@ -215,7 +215,7 @@ const { navigation, currentPath } = Astro.props;
     const backdropEl = backdrop;
 
     function getHeaderHeight() {
-      return header?.offsetHeight ?? 65;
+      return header?.getBoundingClientRect().bottom ?? 65;
     }
 
     let openedViaKeyboard = false;
