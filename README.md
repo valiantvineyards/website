@@ -95,6 +95,7 @@ All business hours, contact details, and address information are centralized in 
 - **Seasonal notes** — Update the `note` field (e.g., holiday closures)
 - **Phone/email** — Edit the `contact` object
 - **Address** — Edit the `address` object
+- **Announcement bar** — Set `announcement.enabled` to `true` and fill in `text`. Optional `link` and `linkText` add a call-to-action. Changing the text auto-resets dismissal for returning visitors.
 
 Changes will automatically propagate to the homepage, tasting room page, and contact page.
 
