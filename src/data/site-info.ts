@@ -44,7 +44,7 @@ export const social = {
 // Announcement bar above the nav — set enabled: false to disable.
 // Changing text auto-resets dismissal for returning visitors.
 export const announcement = {
-  enabled: true,
+  enabled: false,
   text: "Bourbon, Beer & BBQ Bacchanal - Friday, Feb. 20th at 6:30 PM",
   link: "https://aftontickets.com/bbb-2026",
   linkText: "Get Your Tickets Online",
