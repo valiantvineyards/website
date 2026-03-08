@@ -90,7 +90,7 @@ const typeLabel = employmentType === "full-time" ? "Full-Time" : "Part-Time";
         <slot />
       </div>
 
-      <footer class="mt-12 pt-8 border-t border-neutral-200 flex items-center justify-between">
+      <footer class="mt-12 pt-8 border-t border-neutral-200">
         <a
           href="/jobs/"
           class="inline-flex items-center text-gold hover:text-gold/80 font-medium transition-colors"
@@ -109,12 +109,6 @@ const typeLabel = employmentType === "full-time" ? "Full-Time" : "Part-Time";
             />
           </svg>
           Back to Careers
-        </a>
-        <a
-          href={`/jobs/apply?position=${slug}`}
-          class="inline-block rounded-md bg-gold px-6 py-3 text-sm font-medium text-white shadow transition-colors hover:bg-gold-dark"
-        >
-          Apply Now
         </a>
       </footer>
     </div>

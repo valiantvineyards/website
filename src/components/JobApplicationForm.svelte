@@ -15,6 +15,12 @@
 
   let { jobOptions, initialPosition = "" }: Props = $props();
 
+  // Read position from URL query param client-side (static builds can't read it at SSR time)
+  if (!initialPosition && typeof window !== "undefined") {
+    const params = new URLSearchParams(window.location.search);
+    initialPosition = params.get("position") ?? "";
+  }
+
   // ── Step Management ──────────────────────────────────────────────
   const STEPS = [
     { label: "Position & You" },
