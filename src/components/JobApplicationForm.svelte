@@ -445,15 +445,18 @@
 <div id="application-form-container" class="mx-auto max-w-3xl">
   <!-- Progress Bar -->
   <nav aria-label="Application progress" class="mb-8">
-    <ol class="flex items-center justify-between">
+    <ol class="flex w-full items-start">
       {#each STEPS as step, i}
-        <li class="flex flex-1 items-center {i < STEPS.length - 1 ? '' : ''}">
-          <div class="flex flex-col items-center gap-2">
+        <li class="flex flex-1 flex-col items-center gap-2 relative">
+          <div class="flex items-center w-full justify-center">
+            {#if i > 0}
+              <div class="hidden h-0.5 flex-1 sm:block {i <= currentStep ? 'bg-gold' : 'bg-stone-200'}" aria-hidden="true"></div>
+            {/if}
             <button
               type="button"
               onclick={() => { if (i < currentStep) goToStep(i); }}
               disabled={i > currentStep}
-              class="relative flex h-9 w-9 items-center justify-center rounded-full border-2 text-sm font-medium transition-all
+              class="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 text-sm font-medium transition-all
                 {i < currentStep
                   ? 'border-gold bg-gold text-white cursor-pointer hover:bg-gold-dark'
                   : i === currentStep
@@ -469,13 +472,13 @@
                 {i + 1}
               {/if}
             </button>
-            <span class="hidden text-xs font-medium sm:block {i <= currentStep ? 'text-foreground' : 'text-stone-400'}">
-              {step.label}
-            </span>
+            {#if i < STEPS.length - 1}
+              <div class="hidden h-0.5 flex-1 sm:block {i < currentStep ? 'bg-gold' : 'bg-stone-200'}" aria-hidden="true"></div>
+            {/if}
           </div>
-          {#if i < STEPS.length - 1}
-            <div class="mx-2 mt-[-1.25rem] hidden h-0.5 flex-1 sm:block {i < currentStep ? 'bg-gold' : 'bg-stone-200'}" aria-hidden="true"></div>
-          {/if}
+          <span class="hidden text-xs font-medium text-center sm:block {i <= currentStep ? 'text-foreground' : 'text-stone-400'}">
+            {step.label}
+          </span>
         </li>
       {/each}
     </ol>
