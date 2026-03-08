@@ -51,7 +51,6 @@ const sortedJobs = allJobs.sort((a, b) => {
             {sortedJobs.map((job) => {
               const image = job.data.featuredImage ?? defaultImage;
               const imageAlt = job.data.featuredImageAlt ?? job.data.title;
-              const typeLabel = job.data.employmentType === "full-time" ? "Full-Time" : "Part-Time";
 
               return (
                 <a
@@ -66,9 +65,6 @@ const sortedJobs = allJobs.sort((a, b) => {
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <span class="absolute top-3 right-3 bg-gold text-white text-sm font-medium px-3 py-1">
-                      {typeLabel}
-                    </span>
                   </div>
                   <div class="p-6">
                     <h2 class="font-serif text-xl font-semibold text-foreground group-hover:text-gold transition-colors">
