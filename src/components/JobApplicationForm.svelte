@@ -288,8 +288,7 @@
     if (!validateStep(4)) return;
 
     // Check Turnstile
-    const turnstileInput = document.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]');
-    if (!turnstileInput?.value) {
+    if (!turnstileToken) {
       submitResult = { success: false, message: "Please complete the security check before submitting." };
       return;
     }
@@ -355,7 +354,7 @@
       formData.append("website", "");
 
       // Turnstile
-      formData.append("cf-turnstile-response", turnstileInput.value);
+      formData.append("cf-turnstile-response", turnstileToken);
 
       const response = await fetch("/api/job-application", {
         method: "POST",
@@ -367,6 +366,7 @@
       if (result.success) {
         submitResult = { success: true, message: "Your application has been submitted successfully! We'll be in touch soon." };
         // Reset Turnstile
+        turnstileToken = "";
         if (window.turnstile) {
           window.turnstile.reset();
         }
@@ -381,18 +381,28 @@
   }
 
   // ── Turnstile Rendering ──────────────────────────────────────────
+  let turnstileToken = $state("");
   let turnstileRendered = $state(false);
 
   function renderTurnstile() {
-    if (turnstileRendered) return;
     const container = document.querySelector(".cf-turnstile");
-    if (container && window.turnstile) {
-      window.turnstile.render(container, {
-        sitekey: "0x4AAAAAACHr1kbpPYRV4EtW",
-        theme: "light",
-      });
-      turnstileRendered = true;
+    if (!container || !window.turnstile) return;
+
+    // Clear previous widget if re-rendering
+    if (turnstileRendered) {
+      while (container.firstChild) container.removeChild(container.firstChild);
+      turnstileRendered = false;
+      turnstileToken = "";
     }
+
+    window.turnstile.render(container, {
+      sitekey: "0x4AAAAAACHr1kbpPYRV4EtW",
+      theme: "light",
+      callback: (token: string) => { turnstileToken = token; },
+      "error-callback": () => { turnstileToken = ""; },
+      "expired-callback": () => { turnstileToken = ""; },
+    });
+    turnstileRendered = true;
   }
 
   // When entering review step, render Turnstile
@@ -400,6 +410,10 @@
     if (currentStep === 4) {
       // Small delay to let DOM render
       setTimeout(renderTurnstile, 100);
+    } else if (turnstileRendered) {
+      // Reset when navigating away so it re-renders when returning
+      turnstileRendered = false;
+      turnstileToken = "";
     }
   });
 </script>
