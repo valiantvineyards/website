@@ -42,20 +42,23 @@
   let startDate = $state("");
   let schedule = $state<string[]>([]);
 
-  let employer1 = $state("");
-  let jobTitle1 = $state("");
-  let jobCityState1 = $state("");
-  let jobStart1 = $state("");
-  let jobEnd1 = $state("");
-  let currentlyEmployed1 = $state(false);
-  let jobResponsibilities1 = $state("");
-  let employer2 = $state("");
-  let jobTitle2 = $state("");
-  let jobCityState2 = $state("");
-  let jobStart2 = $state("");
-  let jobEnd2 = $state("");
-  let currentlyEmployed2 = $state(false);
-  let jobResponsibilities2 = $state("");
+  const MAX_JOBS = 4;
+
+  interface JobEntry {
+    employer: string;
+    jobTitle: string;
+    jobCityState: string;
+    jobStart: string;
+    jobEnd: string;
+    currentlyEmployed: boolean;
+    jobResponsibilities: string;
+  }
+
+  function emptyJob(): JobEntry {
+    return { employer: "", jobTitle: "", jobCityState: "", jobStart: "", jobEnd: "", currentlyEmployed: false, jobResponsibilities: "" };
+  }
+
+  let jobs = $state<JobEntry[]>([emptyJob()]);
 
   let schoolName = $state("");
   let schoolCityState = $state("");
@@ -256,8 +259,22 @@
   }
 
   // ── Navigation ───────────────────────────────────────────────────
+  function scrollToFirstError() {
+    requestAnimationFrame(() => {
+      const firstError = document.querySelector(".form-error") as HTMLElement | null;
+      if (!firstError) return;
+      // Scroll the parent container into view so the label is visible
+      const container = firstError.closest("div") ?? firstError;
+      container.scrollIntoView({ behavior: "smooth", block: "center" });
+      firstError.focus();
+    });
+  }
+
   function nextStep() {
-    if (!validateStep(currentStep)) return;
+    if (!validateStep(currentStep)) {
+      scrollToFirstError();
+      return;
+    }
     direction = 1;
     stepKey++;
     currentStep = Math.min(currentStep + 1, STEPS.length - 1);
@@ -284,7 +301,10 @@
 
   // ── Submission ───────────────────────────────────────────────────
   async function handleSubmit() {
-    if (!validateStep(4)) return;
+    if (!validateStep(4)) {
+      scrollToFirstError();
+      return;
+    }
 
     // Check Turnstile
     if (!turnstileToken) {
@@ -318,18 +338,16 @@
       for (const s of skills) formData.append("skills", s);
 
       // Employment
-      if (employer1) formData.append("employer1", employer1);
-      if (jobTitle1) formData.append("jobTitle1", jobTitle1);
-      if (jobCityState1) formData.append("jobCityState1", jobCityState1);
-      if (jobStart1) formData.append("jobStart1", jobStart1);
-      if (jobEnd1) formData.append("jobEnd1", jobEnd1);
-      if (jobResponsibilities1) formData.append("jobResponsibilities1", jobResponsibilities1);
-      if (employer2) formData.append("employer2", employer2);
-      if (jobTitle2) formData.append("jobTitle2", jobTitle2);
-      if (jobCityState2) formData.append("jobCityState2", jobCityState2);
-      if (jobStart2) formData.append("jobStart2", jobStart2);
-      if (jobEnd2) formData.append("jobEnd2", jobEnd2);
-      if (jobResponsibilities2) formData.append("jobResponsibilities2", jobResponsibilities2);
+      for (let i = 0; i < jobs.length; i++) {
+        const job = jobs[i];
+        const n = i + 1;
+        if (job.employer) formData.append(`employer${n}`, job.employer);
+        if (job.jobTitle) formData.append(`jobTitle${n}`, job.jobTitle);
+        if (job.jobCityState) formData.append(`jobCityState${n}`, job.jobCityState);
+        if (job.jobStart) formData.append(`jobStart${n}`, job.jobStart);
+        if (job.jobEnd) formData.append(`jobEnd${n}`, job.jobEnd);
+        if (job.jobResponsibilities) formData.append(`jobResponsibilities${n}`, job.jobResponsibilities);
+      }
 
       // Education
       if (schoolName) formData.append("schoolName", schoolName);
@@ -377,6 +395,7 @@
     }
 
     submitting = false;
+    window.scrollTo(0, 0);
   }
 
   // ── Turnstile Rendering ──────────────────────────────────────────
@@ -709,82 +728,63 @@
                 Employment History
                 <span class="mt-1 block h-0.5 w-10 bg-gold"></span>
               </h2>
-              <p class="mt-2 text-sm text-muted-foreground">Optional — list up to 2 previous positions.</p>
+              <p class="mt-2 text-sm text-muted-foreground">Optional — list up to {MAX_JOBS} previous positions.</p>
 
               <div class="mt-5 space-y-6">
-                <!-- Position 1 -->
-                <div class="rounded-lg border border-border/30 bg-stone-50/50 p-5 space-y-4">
-                  <p class="text-sm font-semibold text-muted-foreground">Position 1</p>
-                  <div class="grid gap-4 sm:grid-cols-2">
-                    <div>
-                      <label for="employer1" class="block text-sm font-medium mb-2">Employer</label>
-                      <input type="text" id="employer1" bind:value={employer1} class="form-input" />
+                {#each jobs as job, i}
+                  <div class="rounded-lg border border-border/30 bg-stone-50/50 p-5 space-y-4" transition:slide>
+                    <div class="flex items-center justify-between">
+                      <p class="text-sm font-semibold text-muted-foreground">Position {i + 1}</p>
+                      {#if i > 0}
+                        <button type="button" onclick={() => { jobs = jobs.filter((_, idx) => idx !== i); }}
+                          class="text-sm font-medium text-red-600 hover:text-red-700 transition-colors">
+                          Remove
+                        </button>
+                      {/if}
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <label for="employer{i+1}" class="block text-sm font-medium mb-2">Employer</label>
+                        <input type="text" id="employer{i+1}" bind:value={job.employer} class="form-input" />
+                      </div>
+                      <div>
+                        <label for="jobTitle{i+1}" class="block text-sm font-medium mb-2">Position/Title</label>
+                        <input type="text" id="jobTitle{i+1}" bind:value={job.jobTitle} class="form-input" />
+                      </div>
                     </div>
                     <div>
-                      <label for="jobTitle1" class="block text-sm font-medium mb-2">Position/Title</label>
-                      <input type="text" id="jobTitle1" bind:value={jobTitle1} class="form-input" />
+                      <label for="jobCityState{i+1}" class="block text-sm font-medium mb-2">City/State</label>
+                      <input type="text" id="jobCityState{i+1}" bind:value={job.jobCityState} class="form-input" />
                     </div>
-                  </div>
-                  <div>
-                    <label for="jobCityState1" class="block text-sm font-medium mb-2">City/State</label>
-                    <input type="text" id="jobCityState1" bind:value={jobCityState1} class="form-input" />
-                  </div>
-                  <div class="grid gap-4 sm:grid-cols-2">
+                    <div class="grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <label for="jobStart{i+1}" class="block text-sm font-medium mb-2">Start Date</label>
+                        <input type="date" id="jobStart{i+1}" bind:value={job.jobStart} class="form-input" />
+                      </div>
+                      <div>
+                        <label for="jobEnd{i+1}" class="block text-sm font-medium mb-2">End Date</label>
+                        <input type="date" id="jobEnd{i+1}" bind:value={job.jobEnd} class="form-input" disabled={job.currentlyEmployed} />
+                        <label class="mt-2 flex items-center gap-2 text-sm">
+                          <input type="checkbox" bind:checked={job.currentlyEmployed}
+                            onchange={() => { if (job.currentlyEmployed) job.jobEnd = ""; }}
+                            class="custom-checkbox" />
+                          Currently employed here
+                        </label>
+                      </div>
+                    </div>
                     <div>
-                      <label for="jobStart1" class="block text-sm font-medium mb-2">Start Date</label>
-                      <input type="date" id="jobStart1" bind:value={jobStart1} class="form-input" />
-                    </div>
-                    <div>
-                      <label for="jobEnd1" class="block text-sm font-medium mb-2">End Date</label>
-                      <input type="date" id="jobEnd1" bind:value={jobEnd1} class="form-input" disabled={currentlyEmployed1} />
-                      <label class="mt-2 flex items-center gap-2 text-sm">
-                        <input type="checkbox" bind:checked={currentlyEmployed1} onchange={() => { if (currentlyEmployed1) jobEnd1 = ""; }} class="custom-checkbox" />
-                        Currently employed here
-                      </label>
+                      <label for="jobResponsibilities{i+1}" class="block text-sm font-medium mb-2">Responsibilities</label>
+                      <textarea id="jobResponsibilities{i+1}" bind:value={job.jobResponsibilities} rows="3" class="form-input resize-y"></textarea>
                     </div>
                   </div>
-                  <div>
-                    <label for="jobResponsibilities1" class="block text-sm font-medium mb-2">Responsibilities</label>
-                    <textarea id="jobResponsibilities1" bind:value={jobResponsibilities1} rows="3" class="form-input resize-y"></textarea>
-                  </div>
-                </div>
+                {/each}
 
-                <!-- Position 2 -->
-                <div class="rounded-lg border border-border/30 bg-stone-50/50 p-5 space-y-4">
-                  <p class="text-sm font-semibold text-muted-foreground">Position 2</p>
-                  <div class="grid gap-4 sm:grid-cols-2">
-                    <div>
-                      <label for="employer2" class="block text-sm font-medium mb-2">Employer</label>
-                      <input type="text" id="employer2" bind:value={employer2} class="form-input" />
-                    </div>
-                    <div>
-                      <label for="jobTitle2" class="block text-sm font-medium mb-2">Position/Title</label>
-                      <input type="text" id="jobTitle2" bind:value={jobTitle2} class="form-input" />
-                    </div>
-                  </div>
-                  <div>
-                    <label for="jobCityState2" class="block text-sm font-medium mb-2">City/State</label>
-                    <input type="text" id="jobCityState2" bind:value={jobCityState2} class="form-input" />
-                  </div>
-                  <div class="grid gap-4 sm:grid-cols-2">
-                    <div>
-                      <label for="jobStart2" class="block text-sm font-medium mb-2">Start Date</label>
-                      <input type="date" id="jobStart2" bind:value={jobStart2} class="form-input" />
-                    </div>
-                    <div>
-                      <label for="jobEnd2" class="block text-sm font-medium mb-2">End Date</label>
-                      <input type="date" id="jobEnd2" bind:value={jobEnd2} class="form-input" disabled={currentlyEmployed2} />
-                      <label class="mt-2 flex items-center gap-2 text-sm">
-                        <input type="checkbox" bind:checked={currentlyEmployed2} onchange={() => { if (currentlyEmployed2) jobEnd2 = ""; }} class="custom-checkbox" />
-                        Currently employed here
-                      </label>
-                    </div>
-                  </div>
-                  <div>
-                    <label for="jobResponsibilities2" class="block text-sm font-medium mb-2">Responsibilities</label>
-                    <textarea id="jobResponsibilities2" bind:value={jobResponsibilities2} rows="3" class="form-input resize-y"></textarea>
-                  </div>
-                </div>
+                {#if jobs.length < MAX_JOBS}
+                  <button type="button" onclick={() => { jobs = [...jobs, emptyJob()]; }}
+                    class="w-full rounded-lg border-2 border-dashed border-border/40 py-3 text-sm font-medium text-muted-foreground hover:border-gold hover:text-gold transition-colors">
+                    + Add Another Position
+                  </button>
+                {/if}
               </div>
             </section>
 
@@ -887,7 +887,7 @@
                     </div>
                     <div>
                       <label for="refPhone1" class="block text-sm font-medium mb-2">Phone</label>
-                      <input type="tel" id="refPhone1" bind:value={refPhone1} class="form-input" />
+                      <input type="tel" id="refPhone1" value={refPhone1} oninput={(e) => { refPhone1 = formatPhone((e.target as HTMLInputElement).value); }} placeholder="(555) 123-4567" class="form-input" />
                     </div>
                     <div>
                       <label for="refRelationship1" class="block text-sm font-medium mb-2">Relationship</label>
@@ -904,7 +904,7 @@
                     </div>
                     <div>
                       <label for="refPhone2" class="block text-sm font-medium mb-2">Phone</label>
-                      <input type="tel" id="refPhone2" bind:value={refPhone2} class="form-input" />
+                      <input type="tel" id="refPhone2" value={refPhone2} oninput={(e) => { refPhone2 = formatPhone((e.target as HTMLInputElement).value); }} placeholder="(555) 123-4567" class="form-input" />
                     </div>
                     <div>
                       <label for="refRelationship2" class="block text-sm font-medium mb-2">Relationship</label>
@@ -1036,27 +1036,19 @@
                   <button type="button" onclick={() => goToStep(2)} class="text-sm font-medium text-gold hover:text-gold-dark transition-colors">Edit</button>
                 </div>
                 <dl class="review-dl">
-                  {#if employer1 || jobTitle1}
-                    <div class="col-span-full border-b border-border/30 pb-2 mb-2">
-                      <dt class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Position 1</dt>
-                    </div>
-                    {#if employer1}<div><dt>Employer</dt><dd>{employer1}</dd></div>{/if}
-                    {#if jobTitle1}<div><dt>Title</dt><dd>{jobTitle1}</dd></div>{/if}
-                    {#if jobCityState1}<div><dt>Location</dt><dd>{jobCityState1}</dd></div>{/if}
-                    {#if jobStart1 || jobEnd1 || currentlyEmployed1}<div><dt>Dates</dt><dd>{[jobStart1, currentlyEmployed1 ? "Present" : jobEnd1].filter(Boolean).join(" — ")}</dd></div>{/if}
-                    {#if jobResponsibilities1}<div class="col-span-full"><dt>Responsibilities</dt><dd class="whitespace-pre-line">{jobResponsibilities1}</dd></div>{/if}
-                  {/if}
-                  {#if employer2 || jobTitle2}
-                    <div class="col-span-full border-b border-border/30 pb-2 mb-2 {employer1 || jobTitle1 ? 'mt-3' : ''}">
-                      <dt class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Position 2</dt>
-                    </div>
-                    {#if employer2}<div><dt>Employer</dt><dd>{employer2}</dd></div>{/if}
-                    {#if jobTitle2}<div><dt>Title</dt><dd>{jobTitle2}</dd></div>{/if}
-                    {#if jobCityState2}<div><dt>Location</dt><dd>{jobCityState2}</dd></div>{/if}
-                    {#if jobStart2 || jobEnd2 || currentlyEmployed2}<div><dt>Dates</dt><dd>{[jobStart2, currentlyEmployed2 ? "Present" : jobEnd2].filter(Boolean).join(" — ")}</dd></div>{/if}
-                    {#if jobResponsibilities2}<div class="col-span-full"><dt>Responsibilities</dt><dd class="whitespace-pre-line">{jobResponsibilities2}</dd></div>{/if}
-                  {/if}
-                  {#if !employer1 && !jobTitle1 && !employer2 && !jobTitle2}
+                  {#each jobs as job, i}
+                    {#if job.employer || job.jobTitle}
+                      <div class="col-span-full border-b border-border/30 pb-2 mb-2 {i > 0 ? 'mt-3' : ''}">
+                        <dt class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Position {i + 1}</dt>
+                      </div>
+                      {#if job.employer}<div><dt>Employer</dt><dd>{job.employer}</dd></div>{/if}
+                      {#if job.jobTitle}<div><dt>Title</dt><dd>{job.jobTitle}</dd></div>{/if}
+                      {#if job.jobCityState}<div><dt>Location</dt><dd>{job.jobCityState}</dd></div>{/if}
+                      {#if job.jobStart || job.jobEnd || job.currentlyEmployed}<div><dt>Dates</dt><dd>{[job.jobStart, job.currentlyEmployed ? "Present" : job.jobEnd].filter(Boolean).join(" — ")}</dd></div>{/if}
+                      {#if job.jobResponsibilities}<div class="col-span-full"><dt>Responsibilities</dt><dd class="whitespace-pre-line">{job.jobResponsibilities}</dd></div>{/if}
+                    {/if}
+                  {/each}
+                  {#if !jobs.some(j => j.employer || j.jobTitle)}
                     <div><dt>Employment</dt><dd class="text-muted-foreground italic">Not provided</dd></div>
                   {/if}
                   {#if schoolName || educationLevel}
@@ -1235,9 +1227,8 @@
     padding: 0.625rem 1rem;
     font-size: 0.9375rem;
     line-height: 1.5;
-    height: 2.875rem;
     transition: border-color 0.15s, box-shadow 0.15s;
-    appearance: auto;
+    appearance: none;
   }
 
   .form-select:focus {

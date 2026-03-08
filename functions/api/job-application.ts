@@ -129,19 +129,25 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       startDate: (formData.get("startDate") as string) || "",
       schedule: formData.getAll("schedule") as string[],
       ageConfirmation: (formData.get("ageConfirmation") as string) || "",
-      // Employment history
-      employer1: (formData.get("employer1") as string) || "",
-      jobTitle1: (formData.get("jobTitle1") as string) || "",
-      jobCityState1: (formData.get("jobCityState1") as string) || "",
-      jobStart1: (formData.get("jobStart1") as string) || "",
-      jobEnd1: (formData.get("jobEnd1") as string) || "",
-      jobResponsibilities1: (formData.get("jobResponsibilities1") as string) || "",
-      employer2: (formData.get("employer2") as string) || "",
-      jobTitle2: (formData.get("jobTitle2") as string) || "",
-      jobCityState2: (formData.get("jobCityState2") as string) || "",
-      jobStart2: (formData.get("jobStart2") as string) || "",
-      jobEnd2: (formData.get("jobEnd2") as string) || "",
-      jobResponsibilities2: (formData.get("jobResponsibilities2") as string) || "",
+      // Employment history (dynamic 1–4 entries)
+      jobs: (() => {
+        const jobs: JobEntryData[] = [];
+        for (let i = 1; i <= 4; i++) {
+          const employer = (formData.get(`employer${i}`) as string) || "";
+          const jobTitle = (formData.get(`jobTitle${i}`) as string) || "";
+          if (employer || jobTitle) {
+            jobs.push({
+              employer,
+              jobTitle,
+              jobCityState: (formData.get(`jobCityState${i}`) as string) || "",
+              jobStart: (formData.get(`jobStart${i}`) as string) || "",
+              jobEnd: (formData.get(`jobEnd${i}`) as string) || "",
+              jobResponsibilities: (formData.get(`jobResponsibilities${i}`) as string) || "",
+            });
+          }
+        }
+        return jobs;
+      })(),
       // Education
       schoolName: (formData.get("schoolName") as string) || "",
       schoolCityState: (formData.get("schoolCityState") as string) || "",
@@ -238,6 +244,15 @@ async function verifyTurnstile(
   return { success: result.success };
 }
 
+interface JobEntryData {
+  employer: string;
+  jobTitle: string;
+  jobCityState: string;
+  jobStart: string;
+  jobEnd: string;
+  jobResponsibilities: string;
+}
+
 interface ApplicationData {
   position: string;
   fullName: string;
@@ -250,18 +265,7 @@ interface ApplicationData {
   startDate: string;
   schedule: string[];
   ageConfirmation: string;
-  employer1: string;
-  jobTitle1: string;
-  jobCityState1: string;
-  jobStart1: string;
-  jobEnd1: string;
-  jobResponsibilities1: string;
-  employer2: string;
-  jobTitle2: string;
-  jobCityState2: string;
-  jobStart2: string;
-  jobEnd2: string;
-  jobResponsibilities2: string;
+  jobs: JobEntryData[];
   schoolName: string;
   schoolCityState: string;
   educationLevel: string;
@@ -274,6 +278,11 @@ interface ApplicationData {
   refName2: string;
   refPhone2: string;
   refRelationship2: string;
+}
+
+function formatDate(dateStr: string): string {
+  const [year, month, day] = dateStr.split("-");
+  return `${month}-${day}-${year}`;
 }
 
 async function generateApplicationPDF(data: ApplicationData): Promise<Uint8Array> {
@@ -290,7 +299,7 @@ async function generateApplicationPDF(data: ApplicationData): Promise<Uint8Array
 
   const black = rgb(0, 0, 0);
   const gray = rgb(0.4, 0.4, 0.4);
-  const gold = rgb(0.72, 0.53, 0.04);
+  const charcoal = rgb(0.2, 0.2, 0.2);
 
   function checkPage(needed: number) {
     if (y - needed < margin) {
@@ -309,7 +318,7 @@ async function generateApplicationPDF(data: ApplicationData): Promise<Uint8Array
       color: gray,
     });
     y -= 18;
-    page.drawText(title, { x: margin, y, size: 13, font: boldFont, color: gold });
+    page.drawText(title, { x: margin, y, size: 13, font: boldFont, color: charcoal });
     y -= 18;
   }
 
@@ -341,7 +350,7 @@ async function generateApplicationPDF(data: ApplicationData): Promise<Uint8Array
   }
 
   // Header
-  page.drawText("Valiant Vineyards", { x: margin, y, size: 20, font: boldFont, color: gold });
+  page.drawText("Valiant Vineyards", { x: margin, y, size: 20, font: boldFont, color: charcoal });
   y -= 20;
   page.drawText("Employment Application", { x: margin, y, size: 14, font, color: gray });
   y -= 12;
@@ -370,30 +379,21 @@ async function generateApplicationPDF(data: ApplicationData): Promise<Uint8Array
 
   // Availability
   drawSectionHeader("Availability");
-  if (data.startDate) drawField("Start Date", data.startDate);
+  if (data.startDate) drawField("Start Date", formatDate(data.startDate));
   if (data.schedule.length > 0) drawField("Schedule", data.schedule.join(", "));
 
   // Employment History
-  const hasJob1 = data.employer1 || data.jobTitle1;
-  const hasJob2 = data.employer2 || data.jobTitle2;
-  if (hasJob1 || hasJob2) {
+  if (data.jobs.length > 0) {
     drawSectionHeader("Employment History");
-    if (hasJob1) {
-      drawField("Employer", data.employer1);
-      drawField("Position", data.jobTitle1);
-      if (data.jobCityState1) drawField("Location", data.jobCityState1);
-      const dates1 = [data.jobStart1, data.jobEnd1].filter(Boolean).join(" — ");
-      if (dates1) drawField("Dates", dates1);
-      if (data.jobResponsibilities1) drawField("Responsibilities", data.jobResponsibilities1);
-      if (hasJob2) y -= 8;
-    }
-    if (hasJob2) {
-      drawField("Employer", data.employer2);
-      drawField("Position", data.jobTitle2);
-      if (data.jobCityState2) drawField("Location", data.jobCityState2);
-      const dates2 = [data.jobStart2, data.jobEnd2].filter(Boolean).join(" — ");
-      if (dates2) drawField("Dates", dates2);
-      if (data.jobResponsibilities2) drawField("Responsibilities", data.jobResponsibilities2);
+    for (let i = 0; i < data.jobs.length; i++) {
+      const job = data.jobs[i];
+      drawField("Employer", job.employer);
+      drawField("Position", job.jobTitle);
+      if (job.jobCityState) drawField("Location", job.jobCityState);
+      const dates = [job.jobStart, job.jobEnd].filter(Boolean).map(formatDate).join(" — ");
+      if (dates) drawField("Dates", dates);
+      if (job.jobResponsibilities) drawField("Responsibilities", job.jobResponsibilities);
+      if (i < data.jobs.length - 1) y -= 8;
     }
   }
 
@@ -461,7 +461,7 @@ async function sendNotificationEmail(
 
   const htmlBody = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: #b8860b; border-bottom: 2px solid #b8860b; padding-bottom: 8px;">
+      <h2 style="color: #333; border-bottom: 2px solid #333; padding-bottom: 8px;">
         New Job Application: ${positionTitle}
       </h2>
 
@@ -515,10 +515,15 @@ async function sendConfirmationEmail(
 ): Promise<void> {
   const htmlBody = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: #b8860b;">Thank You for Your Application</h2>
+      <h2 style="color: #333;">Thank You for Your Application</h2>
       <p>Dear ${name},</p>
       <p>Thank you for applying for the <strong>${positionTitle}</strong> position at Valiant Vineyards Winery & Distillery. We have received your application and will review it shortly.</p>
       <p>If your qualifications match our needs, we will be in touch to schedule an interview. In the meantime, feel free to reach out if you have any questions.</p>
+      <p style="margin-top: 16px; padding: 12px; background-color: #f5f5f5; border-radius: 4px; font-size: 14px; color: #555;">
+        <strong>Contact Us</strong><br />
+        Phone: <a href="tel:+16056244500" style="color: #333;">(605) 624-4500</a><br />
+        Email: <a href="mailto:wine@valiantvineyards.us" style="color: #333;">wine@valiantvineyards.us</a>
+      </p>
       <p>Best regards,<br />Valiant Vineyards Winery & Distillery</p>
     </div>
   `;
