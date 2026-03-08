@@ -47,12 +47,14 @@
   let jobCityState1 = $state("");
   let jobStart1 = $state("");
   let jobEnd1 = $state("");
+  let currentlyEmployed1 = $state(false);
   let jobResponsibilities1 = $state("");
   let employer2 = $state("");
   let jobTitle2 = $state("");
   let jobCityState2 = $state("");
   let jobStart2 = $state("");
   let jobEnd2 = $state("");
+  let currentlyEmployed2 = $state(false);
   let jobResponsibilities2 = $state("");
 
   let schoolName = $state("");
@@ -277,10 +279,7 @@
   }
 
   function scrollToTop() {
-    // Scroll the form container into view
-    requestAnimationFrame(() => {
-      document.getElementById("application-form-container")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+    window.scrollTo(0, 0);
   }
 
   // ── Submission ───────────────────────────────────────────────────
@@ -737,7 +736,11 @@
                     </div>
                     <div>
                       <label for="jobEnd1" class="block text-sm font-medium mb-2">End Date</label>
-                      <input type="date" id="jobEnd1" bind:value={jobEnd1} class="form-input" />
+                      <input type="date" id="jobEnd1" bind:value={jobEnd1} class="form-input" disabled={currentlyEmployed1} />
+                      <label class="mt-2 flex items-center gap-2 text-sm">
+                        <input type="checkbox" bind:checked={currentlyEmployed1} onchange={() => { if (currentlyEmployed1) jobEnd1 = ""; }} class="custom-checkbox" />
+                        Currently employed here
+                      </label>
                     </div>
                   </div>
                   <div>
@@ -770,7 +773,11 @@
                     </div>
                     <div>
                       <label for="jobEnd2" class="block text-sm font-medium mb-2">End Date</label>
-                      <input type="date" id="jobEnd2" bind:value={jobEnd2} class="form-input" />
+                      <input type="date" id="jobEnd2" bind:value={jobEnd2} class="form-input" disabled={currentlyEmployed2} />
+                      <label class="mt-2 flex items-center gap-2 text-sm">
+                        <input type="checkbox" bind:checked={currentlyEmployed2} onchange={() => { if (currentlyEmployed2) jobEnd2 = ""; }} class="custom-checkbox" />
+                        Currently employed here
+                      </label>
                     </div>
                   </div>
                   <div>
@@ -1036,7 +1043,7 @@
                     {#if employer1}<div><dt>Employer</dt><dd>{employer1}</dd></div>{/if}
                     {#if jobTitle1}<div><dt>Title</dt><dd>{jobTitle1}</dd></div>{/if}
                     {#if jobCityState1}<div><dt>Location</dt><dd>{jobCityState1}</dd></div>{/if}
-                    {#if jobStart1 || jobEnd1}<div><dt>Dates</dt><dd>{[jobStart1, jobEnd1].filter(Boolean).join(" — ")}</dd></div>{/if}
+                    {#if jobStart1 || jobEnd1 || currentlyEmployed1}<div><dt>Dates</dt><dd>{[jobStart1, currentlyEmployed1 ? "Present" : jobEnd1].filter(Boolean).join(" — ")}</dd></div>{/if}
                     {#if jobResponsibilities1}<div class="col-span-full"><dt>Responsibilities</dt><dd class="whitespace-pre-line">{jobResponsibilities1}</dd></div>{/if}
                   {/if}
                   {#if employer2 || jobTitle2}
@@ -1046,7 +1053,7 @@
                     {#if employer2}<div><dt>Employer</dt><dd>{employer2}</dd></div>{/if}
                     {#if jobTitle2}<div><dt>Title</dt><dd>{jobTitle2}</dd></div>{/if}
                     {#if jobCityState2}<div><dt>Location</dt><dd>{jobCityState2}</dd></div>{/if}
-                    {#if jobStart2 || jobEnd2}<div><dt>Dates</dt><dd>{[jobStart2, jobEnd2].filter(Boolean).join(" — ")}</dd></div>{/if}
+                    {#if jobStart2 || jobEnd2 || currentlyEmployed2}<div><dt>Dates</dt><dd>{[jobStart2, currentlyEmployed2 ? "Present" : jobEnd2].filter(Boolean).join(" — ")}</dd></div>{/if}
                     {#if jobResponsibilities2}<div class="col-span-full"><dt>Responsibilities</dt><dd class="whitespace-pre-line">{jobResponsibilities2}</dd></div>{/if}
                   {/if}
                   {#if !employer1 && !jobTitle1 && !employer2 && !jobTitle2}
@@ -1228,6 +1235,7 @@
     padding: 0.625rem 1rem;
     font-size: 0.9375rem;
     line-height: 1.5;
+    height: 2.875rem;
     transition: border-color 0.15s, box-shadow 0.15s;
     appearance: auto;
   }
