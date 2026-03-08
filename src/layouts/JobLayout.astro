@@ -38,7 +38,12 @@ const formattedDate = date.toLocaleDateString("en-US", {
   month: "long",
   day: "numeric",
 });
-const typeLabel = employmentType === "full-time" ? "Full-Time" : "Part-Time";
+const typeLabels: Record<string, string> = {
+  "full-time": "Full-Time",
+  "part-time": "Part-Time",
+  "full-time / part-time": "Full-Time / Part-Time",
+};
+const typeLabel = typeLabels[employmentType] ?? employmentType;
 ---
 
 <BaseLayout title={`${title} | Careers`} description={description} image={image.src} type="article">

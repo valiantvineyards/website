@@ -39,7 +39,7 @@ const jobs = defineCollection({
       date: z.coerce.date(),
       department: z.string(),
       reportsTo: z.string(),
-      employmentType: z.enum(["full-time", "part-time"]),
+      employmentType: z.enum(["full-time", "part-time", "full-time / part-time"]),
       wage: z.string(),
       ageRequirement: z.number().optional(),
       featuredImage: image().optional(),
