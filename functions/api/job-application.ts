@@ -13,8 +13,7 @@ interface TurnstileResponse {
 const EMAIL_CONFIG = {
   from: "Valiant Vineyards Winery & Distillery <noreply@valiantvineyards.us>",
   to: [
-    // TODO: Uncomment after beta testing is complete
-    // "sherry@valiantvineyards.us",
+    "sherry@valiantvineyards.us",
     "valiantvineyards@proton.me",
   ],
   subject: "New Job Application",
