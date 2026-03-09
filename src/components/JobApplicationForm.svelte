@@ -2,6 +2,9 @@
   import { fly, slide } from "svelte/transition";
   import { tick } from "svelte";
   import Button from "$lib/components/ui/button/button.svelte";
+  import { CalendarDate, today, getLocalTimeZone } from "@internationalized/date";
+  import { Calendar } from "$lib/components/ui/calendar";
+  import * as Popover from "$lib/components/ui/popover";
 
   interface JobOption {
     slug: string;
@@ -47,7 +50,16 @@
   let zip = $state("");
 
   let startDate = $state("");
+  let startDateValue = $state<CalendarDate | undefined>(undefined);
+  let startDateOpen = $state(false);
   let schedule = $state<string[]>([]);
+
+  function formatDisplayDate(dateStr: string): string {
+    if (!dateStr) return "";
+    const [y, m, d] = dateStr.split("-").map(Number);
+    const date = new Date(y, m - 1, d);
+    return date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  }
 
   const MAX_JOBS = 4;
 
@@ -755,7 +767,26 @@
               <div class="mt-5 space-y-6">
                 <div>
                   <label for="startDate" class="block text-sm font-medium mb-2">Earliest Start Date</label>
-                  <input type="date" id="startDate" bind:value={startDate} class="form-input" />
+                  <Popover.Root bind:open={startDateOpen}>
+                    <Popover.Trigger id="startDate" class="form-input w-full text-left flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-muted-foreground"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                      <span class={startDate ? "" : "text-muted-foreground"}>
+                        {startDate ? formatDisplayDate(startDate) : "Select a date"}
+                      </span>
+                    </Popover.Trigger>
+                    <Popover.Content class="w-auto p-0" align="start">
+                      <Calendar
+                        bind:value={startDateValue}
+                        minValue={today(getLocalTimeZone())}
+                        onValueChange={(date) => {
+                          if (date) {
+                            startDate = date.toString();
+                            startDateOpen = false;
+                          }
+                        }}
+                      />
+                    </Popover.Content>
+                  </Popover.Root>
                 </div>
                 <div>
                   <p class="text-sm font-medium mb-3">Preferred Schedule</p>
@@ -1107,7 +1138,7 @@
                   <button type="button" onclick={() => goToStep(1)} class="text-sm font-medium text-gold hover:text-gold-dark transition-colors">Edit</button>
                 </div>
                 <dl class="review-dl">
-                  <div><dt>Start Date</dt><dd>{startDate || "Not provided"}</dd></div>
+                  <div><dt>Start Date</dt><dd>{startDate ? formatDisplayDate(startDate) : "Not provided"}</dd></div>
                   <div><dt>Schedule</dt><dd>{schedule.length > 0 ? schedule.join(", ") : "Not provided"}</dd></div>
                 </dl>
               </section>
