@@ -55,14 +55,53 @@
     employer: string;
     jobTitle: string;
     jobCityState: string;
-    jobStart: string;
-    jobEnd: string;
+    jobStartMonth: string;
+    jobStartYear: string;
+    jobEndMonth: string;
+    jobEndYear: string;
     currentlyEmployed: boolean;
     jobResponsibilities: string;
   }
 
   function emptyJob(): JobEntry {
-    return { employer: "", jobTitle: "", jobCityState: "", jobStart: "", jobEnd: "", currentlyEmployed: false, jobResponsibilities: "" };
+    return { employer: "", jobTitle: "", jobCityState: "", jobStartMonth: "", jobStartYear: "", jobEndMonth: "", jobEndYear: "", currentlyEmployed: false, jobResponsibilities: "" };
+  }
+
+  const MONTHS = [
+    { value: "01", label: "January" },
+    { value: "02", label: "February" },
+    { value: "03", label: "March" },
+    { value: "04", label: "April" },
+    { value: "05", label: "May" },
+    { value: "06", label: "June" },
+    { value: "07", label: "July" },
+    { value: "08", label: "August" },
+    { value: "09", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
+  ];
+
+  function yearOptions(): string[] {
+    const current = new Date().getFullYear();
+    const years: string[] = [];
+    for (let y = current + 1; y >= current - 50; y--) {
+      years.push(String(y));
+    }
+    return years;
+  }
+
+  function formatMonthYear(month: string, year: string): string {
+    if (!year) return "";
+    if (!month) return year;
+    const m = MONTHS.find(m => m.value === month);
+    return m ? `${m.label} ${year}` : year;
+  }
+
+  function toDateValue(month: string, year: string): string {
+    if (!year) return "";
+    if (!month) return year;
+    return `${year}-${month}`;
   }
 
   let jobs = $state<JobEntry[]>([emptyJob()]);
@@ -351,8 +390,10 @@
         if (job.employer) formData.append(`employer${n}`, job.employer);
         if (job.jobTitle) formData.append(`jobTitle${n}`, job.jobTitle);
         if (job.jobCityState) formData.append(`jobCityState${n}`, job.jobCityState);
-        if (job.jobStart) formData.append(`jobStart${n}`, job.jobStart);
-        if (job.jobEnd) formData.append(`jobEnd${n}`, job.jobEnd);
+        const jobStart = toDateValue(job.jobStartMonth, job.jobStartYear);
+        const jobEnd = toDateValue(job.jobEndMonth, job.jobEndYear);
+        if (jobStart) formData.append(`jobStart${n}`, jobStart);
+        if (jobEnd) formData.append(`jobEnd${n}`, jobEnd);
         if (job.jobResponsibilities) formData.append(`jobResponsibilities${n}`, job.jobResponsibilities);
       }
 
@@ -768,16 +809,44 @@
                       <input type="text" id="jobCityState{i+1}" bind:value={job.jobCityState} class="form-input" />
                     </div>
                     <div class="grid gap-4 sm:grid-cols-2">
+                      <fieldset>
+                        <legend class="block text-sm font-medium mb-2">Start Date</legend>
+                        <div class="grid grid-cols-2 gap-2">
+                          <select id="jobStartMonth{i+1}" bind:value={job.jobStartMonth} class="form-select">
+                            <option value="">Month</option>
+                            {#each MONTHS as m}
+                              <option value={m.value}>{m.label}</option>
+                            {/each}
+                          </select>
+                          <select id="jobStartYear{i+1}" bind:value={job.jobStartYear} class="form-select">
+                            <option value="">Year</option>
+                            {#each yearOptions() as y}
+                              <option value={y}>{y}</option>
+                            {/each}
+                          </select>
+                        </div>
+                      </fieldset>
                       <div>
-                        <label for="jobStart{i+1}" class="block text-sm font-medium mb-2">Start Date</label>
-                        <input type="date" id="jobStart{i+1}" bind:value={job.jobStart} class="form-input" />
-                      </div>
-                      <div>
-                        <label for="jobEnd{i+1}" class="block text-sm font-medium mb-2">End Date</label>
-                        <input type="date" id="jobEnd{i+1}" bind:value={job.jobEnd} class="form-input" disabled={job.currentlyEmployed} />
+                        <fieldset disabled={job.currentlyEmployed}>
+                          <legend class="block text-sm font-medium mb-2">End Date</legend>
+                          <div class="grid grid-cols-2 gap-2">
+                            <select id="jobEndMonth{i+1}" bind:value={job.jobEndMonth} class="form-select">
+                              <option value="">Month</option>
+                              {#each MONTHS as m}
+                                <option value={m.value}>{m.label}</option>
+                              {/each}
+                            </select>
+                            <select id="jobEndYear{i+1}" bind:value={job.jobEndYear} class="form-select">
+                              <option value="">Year</option>
+                              {#each yearOptions() as y}
+                                <option value={y}>{y}</option>
+                              {/each}
+                            </select>
+                          </div>
+                        </fieldset>
                         <label class="mt-2 flex items-center gap-2 text-sm">
                           <input type="checkbox" bind:checked={job.currentlyEmployed}
-                            onchange={() => { if (job.currentlyEmployed) job.jobEnd = ""; }}
+                            onchange={() => { if (job.currentlyEmployed) { job.jobEndMonth = ""; job.jobEndYear = ""; } }}
                             class="custom-checkbox" />
                           Currently employed here
                         </label>
@@ -1055,7 +1124,7 @@
                       {#if job.employer}<div><dt>Employer</dt><dd>{job.employer}</dd></div>{/if}
                       {#if job.jobTitle}<div><dt>Title</dt><dd>{job.jobTitle}</dd></div>{/if}
                       {#if job.jobCityState}<div><dt>Location</dt><dd>{job.jobCityState}</dd></div>{/if}
-                      {#if job.jobStart || job.jobEnd || job.currentlyEmployed}<div><dt>Dates</dt><dd>{[job.jobStart, job.currentlyEmployed ? "Present" : job.jobEnd].filter(Boolean).join(" — ")}</dd></div>{/if}
+                      {#if job.jobStartYear || job.jobEndYear || job.currentlyEmployed}<div><dt>Dates</dt><dd>{[formatMonthYear(job.jobStartMonth, job.jobStartYear), job.currentlyEmployed ? "Present" : formatMonthYear(job.jobEndMonth, job.jobEndYear)].filter(Boolean).join(" — ")}</dd></div>{/if}
                       {#if job.jobResponsibilities}<div class="col-span-full"><dt>Responsibilities</dt><dd class="whitespace-pre-line">{job.jobResponsibilities}</dd></div>{/if}
                     {/if}
                   {/each}
