@@ -571,7 +571,7 @@
     <!-- Step Content -->
     {#key stepKey}
       <div
-        class="p-6 sm:p-8"
+        class="p-4 sm:p-8"
         in:fly={{ x: direction * 80, duration: 200, delay: 200 }}
         out:fly={{ x: direction * -80, duration: 200 }}
       >
@@ -579,7 +579,7 @@
         {#if currentStep === 0}
           <div class="space-y-8">
             <!-- Position -->
-            <section class="rounded-lg border border-border/40 bg-white p-6">
+            <section class="rounded-lg border border-border/40 bg-white p-4 sm:p-6">
               <h2 class="font-serif text-xl font-semibold text-foreground">
                 Position
                 <span class="mt-1 block h-0.5 w-10 bg-gold"></span>
@@ -639,7 +639,7 @@
             {/if}
 
             <!-- Personal Information -->
-            <section class="rounded-lg border border-border/40 bg-white p-6">
+            <section class="rounded-lg border border-border/40 bg-white p-4 sm:p-6">
               <h2 class="font-serif text-xl font-semibold text-foreground">
                 Personal Information
                 <span class="mt-1 block h-0.5 w-10 bg-gold"></span>
@@ -776,7 +776,7 @@
         <!-- Step 2: Availability -->
         {:else if currentStep === 1}
           <div class="space-y-8">
-            <section class="rounded-lg border border-border/40 bg-white p-6">
+            <section class="rounded-lg border border-border/40 bg-white p-4 sm:p-6">
               <h2 class="font-serif text-xl font-semibold text-foreground">
                 Availability
                 <span class="mt-1 block h-0.5 w-10 bg-gold"></span>
@@ -825,7 +825,7 @@
         {:else if currentStep === 2}
           <div class="space-y-8">
             <!-- Employment History -->
-            <section class="rounded-lg border border-border/40 bg-white p-6">
+            <section class="rounded-lg border border-border/40 bg-white p-4 sm:p-6">
               <h2 class="font-serif text-xl font-semibold text-foreground">
                 Employment History
                 <span class="mt-1 block h-0.5 w-10 bg-gold"></span>
@@ -919,7 +919,7 @@
             </section>
 
             <!-- Education -->
-            <section class="rounded-lg border border-border/40 bg-white p-6">
+            <section class="rounded-lg border border-border/40 bg-white p-4 sm:p-6">
               <h2 class="font-serif text-xl font-semibold text-foreground">
                 Education
                 <span class="mt-1 block h-0.5 w-10 bg-gold"></span>
@@ -960,7 +960,7 @@
             </section>
 
             <!-- Skills -->
-            <section class="rounded-lg border border-border/40 bg-white p-6">
+            <section class="rounded-lg border border-border/40 bg-white p-4 sm:p-6">
               <h2 class="font-serif text-xl font-semibold text-foreground">
                 Skills
                 <span class="mt-1 block h-0.5 w-10 bg-gold"></span>
@@ -1002,7 +1002,7 @@
         {:else if currentStep === 3}
           <div class="space-y-8">
             <!-- References -->
-            <section class="rounded-lg border border-border/40 bg-white p-6">
+            <section class="rounded-lg border border-border/40 bg-white p-4 sm:p-6">
               <h2 class="font-serif text-xl font-semibold text-foreground">
                 References
                 <span class="mt-1 block h-0.5 w-10 bg-gold"></span>
@@ -1046,7 +1046,7 @@
             </section>
 
             <!-- Resume Upload -->
-            <section class="rounded-lg border border-border/40 bg-white p-6">
+            <section class="rounded-lg border border-border/40 bg-white p-4 sm:p-6">
               <h2 class="font-serif text-xl font-semibold text-foreground">
                 Resume
                 <span class="mt-1 block h-0.5 w-10 bg-gold"></span>
@@ -1119,7 +1119,7 @@
               </div>
             {:else}
               <!-- Review: Position & You -->
-              <section class="rounded-lg border border-border/40 bg-white p-6">
+              <section class="rounded-lg border border-border/40 bg-white p-4 sm:p-6">
                 <div class="flex items-center justify-between mb-4">
                   <h2 class="font-serif text-xl font-semibold text-foreground">
                     Position & You
@@ -1142,7 +1142,7 @@
               </section>
 
               <!-- Review: Availability -->
-              <section class="rounded-lg border border-border/40 bg-white p-6">
+              <section class="rounded-lg border border-border/40 bg-white p-4 sm:p-6">
                 <div class="flex items-center justify-between mb-4">
                   <h2 class="font-serif text-xl font-semibold text-foreground">
                     Availability
@@ -1157,7 +1157,7 @@
               </section>
 
               <!-- Review: Experience -->
-              <section class="rounded-lg border border-border/40 bg-white p-6">
+              <section class="rounded-lg border border-border/40 bg-white p-4 sm:p-6">
                 <div class="flex items-center justify-between mb-4">
                   <h2 class="font-serif text-xl font-semibold text-foreground">
                     Experience
@@ -1201,7 +1201,7 @@
               </section>
 
               <!-- Review: References & Resume -->
-              <section class="rounded-lg border border-border/40 bg-white p-6">
+              <section class="rounded-lg border border-border/40 bg-white p-4 sm:p-6">
                 <div class="flex items-center justify-between mb-4">
                   <h2 class="font-serif text-xl font-semibold text-foreground">
                     References & Resume
@@ -1242,7 +1242,7 @@
               </section>
 
               <!-- Certification -->
-              <section class="rounded-lg border border-border/40 bg-white p-6">
+              <section class="rounded-lg border border-border/40 bg-white p-4 sm:p-6">
                 <h2 class="font-serif text-xl font-semibold text-foreground">
                   Certification
                   <span class="mt-1 block h-0.5 w-10 bg-gold"></span>
@@ -1326,7 +1326,7 @@
     border: 1px solid var(--color-border);
     background-color: white;
     padding: 0.625rem 1rem;
-    font-size: 0.9375rem;
+    font-size: 1rem;
     line-height: 1.5;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
@@ -1360,7 +1360,7 @@
     border: 1px solid var(--color-border);
     background-color: white;
     padding: 0.625rem 1rem;
-    font-size: 0.9375rem;
+    font-size: 1rem;
     line-height: 1.5;
     transition: border-color 0.15s, box-shadow 0.15s;
     appearance: none;
