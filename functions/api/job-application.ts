@@ -372,7 +372,9 @@ async function generateApplicationPDF(data: ApplicationData, positionTitle: stri
 
   function drawField(label: string, rawValue: string) {
     if (!rawValue) return;
-    const value = rawValue.replace(/\r/g, "");
+    // pdf-lib's WinAnsi encoding cannot handle control characters;
+    // replace newlines with spaces so they act as word breaks for wrapping
+    const value = rawValue.replace(/[\r\n]+/g, " ").replace(/[^\x20-\x7E]/g, "");
     checkPage(20);
     page.drawText(label + ":", { x: margin, y, size: 9, font: boldFont, color: gray });
     // Wrap long values
