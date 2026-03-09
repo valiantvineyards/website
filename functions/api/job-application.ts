@@ -44,10 +44,15 @@ function escapeHtml(str: string): string {
 }
 
 function uint8ArrayToBase64(bytes: Uint8Array): string {
-  const CHUNK = 0x8000;
+  const CHUNK = 4096;
   const parts: string[] = [];
   for (let i = 0; i < bytes.length; i += CHUNK) {
-    parts.push(String.fromCharCode(...bytes.subarray(i, i + CHUNK)));
+    const chunk = bytes.subarray(i, i + CHUNK);
+    let binary = "";
+    for (let j = 0; j < chunk.length; j++) {
+      binary += String.fromCharCode(chunk[j]);
+    }
+    parts.push(binary);
   }
   return btoa(parts.join(""));
 }
