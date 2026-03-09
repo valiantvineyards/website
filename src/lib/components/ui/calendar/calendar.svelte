@@ -2,7 +2,7 @@
 	import { Calendar as CalendarPrimitive } from "bits-ui";
 	import * as Calendar from "./index.js";
 	import { cn, type WithoutChildrenOrChild } from "$lib/utils/cn.js";
-	import type { ButtonVariant } from "../button/button.svelte";
+	import type { Variant as ButtonVariant } from "../button/index.js";
 	import { isEqualMonth, type DateValue } from "@internationalized/date";
 	import type { Snippet } from "svelte";
 
@@ -50,7 +50,7 @@ get along, so we shut typescript up by casting `value` to `never`.
 	{weekdayFormat}
 	{disableDaysOutsideMonth}
 	class={cn(
-		"bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
+		"bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent",
 		className
 	)}
 	{locale}
