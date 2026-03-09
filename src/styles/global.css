@@ -124,3 +124,33 @@
   white-space: nowrap;
   border-width: 0;
 }
+
+/* Custom checkbox with gold accent */
+@layer components {
+  .custom-checkbox {
+    appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 1.5px solid var(--color-border);
+    border-radius: 0.25rem;
+    background-color: white;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .custom-checkbox:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-gold) 20%, transparent);
+    border-color: var(--color-gold);
+  }
+
+  .custom-checkbox:checked {
+    background-color: var(--color-gold);
+    border-color: var(--color-gold);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+}

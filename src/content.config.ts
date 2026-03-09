@@ -30,4 +30,23 @@ const stories = defineCollection({
     }),
 });
 
-export const collections = { events, stories };
+const jobs = defineCollection({
+  loader: glob({ pattern: "**/*.mdx", base: "./src/content/jobs" }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string(),
+      date: z.coerce.date(),
+      department: z.string(),
+      reportsTo: z.string(),
+      employmentType: z.enum(["full-time", "part-time", "full-time / part-time"]),
+      wage: z.string(),
+      ageRequirement: z.number().optional(),
+      featuredImage: image().optional(),
+      featuredImageAlt: z.string().optional(),
+      pinned: z.boolean().optional().default(false),
+      draft: z.boolean().optional().default(false),
+    }),
+});
+
+export const collections = { events, stories, jobs };

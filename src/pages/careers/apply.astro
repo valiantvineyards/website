@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import JobApplicationForm from "../../components/JobApplicationForm.svelte";
+import { getCollection } from "astro:content";
+
+const jobs = await getCollection("jobs", ({ data }) => !data.draft);
+const jobOptions = jobs.map((job) => ({
+  slug: job.id,
+  title: job.data.title,
+  ageRequirement: job.data.ageRequirement ?? null,
+}));
+
+// Read position from URL query param for pre-selection
+const initialPosition = Astro.url.searchParams.get("position") ?? "";
+---
+
+<BaseLayout
+  title="Apply | Careers"
+  description="Apply for a position at Valiant Vineyards Winery & Distillery."
+>
+  <section class="py-12 lg:py-16">
+    <div class="container mx-auto px-3 sm:px-4 lg:px-8">
+      <header class="mx-auto mb-10 max-w-3xl text-center">
+        <h1 class="font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+          Employment Application
+        </h1>
+        <p class="mt-4 text-muted-foreground">
+          Fill out the form below to apply for a position at Valiant Vineyards.
+        </p>
+      </header>
+
+      <JobApplicationForm
+        {jobOptions}
+        {initialPosition}
+        client:load
+      />
+    </div>
+  </section>
+
+  <!-- Turnstile Script -->
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+</BaseLayout>

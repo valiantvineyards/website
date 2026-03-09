@@ -1,0 +1,32 @@
+---
+import { getCollection, render } from "astro:content";
+import JobLayout from "../../layouts/JobLayout.astro";
+import type { GetStaticPaths } from "astro";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getCollection("jobs", ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+};
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<JobLayout
+  title={post.data.title}
+  description={post.data.description}
+  date={post.data.date}
+  department={post.data.department}
+  reportsTo={post.data.reportsTo}
+  employmentType={post.data.employmentType}
+  wage={post.data.wage}
+  slug={post.id}
+  ageRequirement={post.data.ageRequirement}
+  featuredImage={post.data.featuredImage}
+  featuredImageAlt={post.data.featuredImageAlt}
+>
+  <Content />
+</JobLayout>
