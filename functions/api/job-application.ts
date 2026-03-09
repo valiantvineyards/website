@@ -370,8 +370,9 @@ async function generateApplicationPDF(data: ApplicationData, positionTitle: stri
     y -= 18;
   }
 
-  function drawField(label: string, value: string) {
-    if (!value) return;
+  function drawField(label: string, rawValue: string) {
+    if (!rawValue) return;
+    const value = rawValue.replace(/\r/g, "");
     checkPage(20);
     page.drawText(label + ":", { x: margin, y, size: 9, font: boldFont, color: gray });
     // Wrap long values
