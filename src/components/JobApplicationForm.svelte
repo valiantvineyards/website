@@ -1,5 +1,6 @@
 <script lang="ts">
   import { fly, slide } from "svelte/transition";
+  import { tick } from "svelte";
   import Button from "$lib/components/ui/button/button.svelte";
 
   interface JobOption {
@@ -401,6 +402,7 @@
     }
 
     submitting = false;
+    await tick();
     document.getElementById("application-form-container")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
