@@ -54,6 +54,13 @@
   let startDateOpen = $state(false);
   let schedule = $state<string[]>([]);
 
+  function onDateSelect(date: CalendarDate | undefined) {
+    if (date) {
+      startDate = date.toString();
+      startDateOpen = false;
+    }
+  }
+
   function formatDisplayDate(dateStr: string): string {
     if (!dateStr) return "";
     const [y, m, d] = dateStr.split("-").map(Number);
@@ -779,16 +786,12 @@
                         {startDate ? formatDisplayDate(startDate) : "Select a date"}
                       </span>
                     </Popover.Trigger>
-                    <Popover.Content class="w-auto p-0" align="start">
+                    <Popover.Content class="w-auto overflow-hidden rounded-lg border p-0" align="start">
                       <Calendar
-                        bind:value={startDateValue}
+                        type="single"
+                        value={startDateValue}
+                        onValueChange={onDateSelect}
                         minValue={today(getLocalTimeZone())}
-                        onValueChange={(date) => {
-                          if (date) {
-                            startDate = date.toString();
-                            startDateOpen = false;
-                          }
-                        }}
                       />
                     </Popover.Content>
                   </Popover.Root>
