@@ -1179,8 +1179,13 @@
                   {#if !refName1 && !refPhone1 && !refName2 && !refPhone2}
                     <div><dt>References</dt><dd class="text-muted-foreground italic">Not provided</dd></div>
                   {/if}
+                </dl>
+                <dl class="review-dl mt-4 border-t border-border/30 pt-4">
+                  <div class="col-span-full border-b border-border/30 pb-2 mb-2">
+                    <dt class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Resume</dt>
+                  </div>
                   <div>
-                    <dt>Resume</dt>
+                    <dt>File</dt>
                     <dd>{resumeFile ? `${resumeFile.name} (${formatFileSize(resumeFile.size)})` : "Not provided"}</dd>
                   </div>
                 </dl>
