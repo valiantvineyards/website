@@ -401,7 +401,7 @@
     }
 
     submitting = false;
-    window.scrollTo(0, 0);
+    document.getElementById("application-form-container")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   // ── Turnstile Rendering ──────────────────────────────────────────
