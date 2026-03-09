@@ -438,7 +438,12 @@
         body: formData,
       });
 
-      const result = await response.json();
+      let result: { success: boolean; error?: string; message?: string };
+      try {
+        result = await response.json();
+      } catch {
+        result = { success: false, error: `Server error (${response.status}). Please try again.` };
+      }
 
       if (result.success) {
         submitResult = { success: true, message: "Your application has been submitted successfully! We'll be in touch soon." };

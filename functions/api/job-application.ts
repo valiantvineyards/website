@@ -214,7 +214,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       { status: 200, headers: CORS_HEADERS }
     );
   } catch (error) {
-    console.error("Job application error:", error);
+    const errMsg = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+    console.error("Job application error:", errMsg);
+    if (error instanceof Error && error.stack) {
+      console.error("Stack trace:", error.stack);
+    }
     return Response.json(
       { success: false, error: "An unexpected error occurred. Please try again." },
       { status: 500, headers: CORS_HEADERS }
@@ -240,8 +244,13 @@ async function verifyTurnstile(
     }
   );
 
-  const result = (await response.json()) as TurnstileResponse;
-  return { success: result.success };
+  try {
+    const result = (await response.json()) as TurnstileResponse;
+    return { success: result.success };
+  } catch {
+    console.error("Turnstile response parsing failed:", response.status, response.statusText);
+    return { success: false };
+  }
 }
 
 interface JobEntryData {
@@ -509,8 +518,12 @@ async function sendNotificationEmail(
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    return { success: false, error: JSON.stringify(errorData) };
+    try {
+      const errorData = await response.json();
+      return { success: false, error: JSON.stringify(errorData) };
+    } catch {
+      return { success: false, error: `Resend API error: ${response.status} ${response.statusText}` };
+    }
   }
 
   return { success: true };
@@ -522,32 +535,36 @@ async function sendConfirmationEmail(
   positionTitle: string,
   apiKey: string
 ): Promise<void> {
-  const htmlBody = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: #333;">Thank You for Your Application</h2>
-      <p>Dear ${name},</p>
-      <p>Thank you for applying for the <strong>${positionTitle}</strong> position at Valiant Vineyards Winery & Distillery. We have received your application and will review it shortly.</p>
-      <p>If your qualifications match our needs, we will be in touch to schedule an interview. In the meantime, feel free to reach out if you have any questions.</p>
-      <p style="margin-top: 16px; padding: 12px; background-color: #f5f5f5; border-radius: 4px; font-size: 14px; color: #555;">
-        <strong>Contact Us</strong><br />
-        Phone: <a href="tel:+16056244500" style="color: #333;">(605) 624-4500</a><br />
-        Email: <a href="mailto:wine@valiantvineyards.us" style="color: #333;">wine@valiantvineyards.us</a>
-      </p>
-      <p>Best regards,<br />Valiant Vineyards Winery & Distillery</p>
-    </div>
-  `;
+  try {
+    const htmlBody = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #333;">Thank You for Your Application</h2>
+        <p>Dear ${name},</p>
+        <p>Thank you for applying for the <strong>${positionTitle}</strong> position at Valiant Vineyards Winery & Distillery. We have received your application and will review it shortly.</p>
+        <p>If your qualifications match our needs, we will be in touch to schedule an interview. In the meantime, feel free to reach out if you have any questions.</p>
+        <p style="margin-top: 16px; padding: 12px; background-color: #f5f5f5; border-radius: 4px; font-size: 14px; color: #555;">
+          <strong>Contact Us</strong><br />
+          Phone: <a href="tel:+16056244500" style="color: #333;">(605) 624-4500</a><br />
+          Email: <a href="mailto:wine@valiantvineyards.us" style="color: #333;">wine@valiantvineyards.us</a>
+        </p>
+        <p>Best regards,<br />Valiant Vineyards Winery & Distillery</p>
+      </div>
+    `;
 
-  await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: EMAIL_CONFIG.from,
-      to: [email],
-      subject: `Application Received — ${positionTitle} at Valiant Vineyards`,
-      html: htmlBody,
-    }),
-  });
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: EMAIL_CONFIG.from,
+        to: [email],
+        subject: `Application Received — ${positionTitle} at Valiant Vineyards`,
+        html: htmlBody,
+      }),
+    });
+  } catch (error) {
+    console.error("Failed to send confirmation email:", error);
+  }
 }
