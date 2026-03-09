@@ -437,9 +437,14 @@
         }
       } else {
         submitResult = { success: false, message: result.error || "Something went wrong. Please try again." };
+        // Reset Turnstile so the user gets a fresh token for retry
+        turnstileToken = "";
+        if (window.turnstile) window.turnstile.reset();
       }
     } catch {
       submitResult = { success: false, message: "Failed to submit application. Please try again." };
+      turnstileToken = "";
+      if (window.turnstile) window.turnstile.reset();
     }
 
     submitting = false;
@@ -465,6 +470,7 @@
     window.turnstile.render(container, {
       sitekey: "0x4AAAAAACHr1kbpPYRV4EtW",
       theme: "light",
+      "refresh-expired": "auto",
       callback: (token: string) => { turnstileToken = token; },
       "error-callback": () => { turnstileToken = ""; },
       "expired-callback": () => { turnstileToken = ""; },
@@ -1218,7 +1224,7 @@
               </section>
 
               <!-- Turnstile -->
-              <div class="cf-turnstile" data-sitekey="0x4AAAAAACHr1kbpPYRV4EtW" data-theme="light" aria-label="Security verification"></div>
+              <div class="cf-turnstile" aria-label="Security verification"></div>
 
               <!-- Submit Error -->
               {#if submitResult && !submitResult.success}
