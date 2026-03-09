@@ -197,7 +197,12 @@
       case "resume":
         if (!value) return "";
         const file = value as File;
-        if (file.type !== "application/pdf") return "Only PDF files are accepted";
+        const allowedTypes = [
+          "application/pdf",
+          "application/msword",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ];
+        if (!allowedTypes.includes(file.type)) return "Only PDF, DOC, and DOCX files are accepted";
         if (file.size > 5 * 1024 * 1024) return "File must be under 5MB";
         return "";
       default:
@@ -1047,7 +1052,7 @@
                 <span class="mt-1 block h-0.5 w-10 bg-gold"></span>
               </h2>
               <div class="mt-5">
-                <p class="text-sm text-muted-foreground mb-3">PDF only, 5MB max</p>
+                <p class="text-sm text-muted-foreground mb-3">PDF, DOC, or DOCX — 5MB max</p>
                 {#if resumeFile}
                   <div class="flex items-center gap-3 rounded-lg border border-border/40 bg-stone-50 p-4">
                     <svg class="h-8 w-8 text-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -1087,7 +1092,7 @@
                       Browse Files
                       <input
                         type="file"
-                        accept=".pdf"
+                        accept=".pdf,.doc,.docx"
                         class="sr-only"
                         onchange={(e) => handleFileSelect((e.target as HTMLInputElement).files?.[0] ?? null)}
                       />

@@ -80,9 +80,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     // Validate file upload if present
     const resumeFile = formData.get("resume") as File | null;
     if (resumeFile && resumeFile.size > 0) {
-      if (resumeFile.type !== "application/pdf") {
+      const allowedTypes = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ];
+      if (!allowedTypes.includes(resumeFile.type)) {
         return Response.json(
-          { success: false, error: "Resume must be a PDF file." },
+          { success: false, error: "Resume must be a PDF, DOC, or DOCX file." },
           { status: 400, headers: CORS_HEADERS }
         );
       }
