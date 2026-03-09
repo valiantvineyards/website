@@ -20,26 +20,45 @@ const EMAIL_CONFIG = {
   subject: "New Job Application",
 };
 
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
+const ALLOWED_ORIGINS = [
+  "https://www.valiantvineyards.us",
+  "https://valiantvineyards.us",
+];
+
+function getCorsHeaders(request: Request): Record<string, string> {
+  const origin = request.headers.get("Origin") || "";
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 function uint8ArrayToBase64(bytes: Uint8Array): string {
-  let binary = "";
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
+  const CHUNK = 0x8000;
+  const parts: string[] = [];
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    parts.push(String.fromCharCode(...bytes.subarray(i, i + CHUNK)));
   }
-  return btoa(binary);
+  return btoa(parts.join(""));
 }
+
+export const onRequestOptions: PagesFunction<Env> = async (context) => {
+  return new Response(null, { headers: getCorsHeaders(context.request) });
+};
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
-
-  if (request.method === "OPTIONS") {
-    return new Response(null, { headers: CORS_HEADERS });
-  }
 
   try {
     const formData = await request.formData();
@@ -49,7 +68,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (honeypot) {
       return Response.json(
         { success: true, message: "Application submitted successfully!" },
-        { status: 200, headers: CORS_HEADERS }
+        { status: 200, headers: getCorsHeaders(request) }
       );
     }
 
@@ -64,7 +83,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!fullName || !email || !phone || !position || certification !== "yes") {
       return Response.json(
         { success: false, error: "Please fill in all required fields and accept the certification." },
-        { status: 400, headers: CORS_HEADERS }
+        { status: 400, headers: getCorsHeaders(request) }
       );
     }
 
@@ -73,7 +92,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!emailRegex.test(email)) {
       return Response.json(
         { success: false, error: "Please enter a valid email address." },
-        { status: 400, headers: CORS_HEADERS }
+        { status: 400, headers: getCorsHeaders(request) }
       );
     }
 
@@ -85,16 +104,19 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         "application/msword",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ];
-      if (!allowedTypes.includes(resumeFile.type)) {
+      const allowedExtensions = [".pdf", ".doc", ".docx"];
+      const fileName = (resumeFile.name || "").toLowerCase();
+      const hasValidExtension = allowedExtensions.some(ext => fileName.endsWith(ext));
+      if (!allowedTypes.includes(resumeFile.type) || !hasValidExtension) {
         return Response.json(
           { success: false, error: "Resume must be a PDF, DOC, or DOCX file." },
-          { status: 400, headers: CORS_HEADERS }
+          { status: 400, headers: getCorsHeaders(request) }
         );
       }
       if (resumeFile.size > 5 * 1024 * 1024) {
         return Response.json(
           { success: false, error: "Resume must be under 5MB." },
-          { status: 400, headers: CORS_HEADERS }
+          { status: 400, headers: getCorsHeaders(request) }
         );
       }
     }
@@ -104,7 +126,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!turnstileToken) {
       return Response.json(
         { success: false, error: "Please complete the security check." },
-        { status: 400, headers: CORS_HEADERS }
+        { status: 400, headers: getCorsHeaders(request) }
       );
     }
 
@@ -117,7 +139,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!turnstileResult.success) {
       return Response.json(
         { success: false, error: "Security verification failed. Please try again." },
-        { status: 400, headers: CORS_HEADERS }
+        { status: 400, headers: getCorsHeaders(request) }
       );
     }
 
@@ -170,53 +192,52 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       refRelationship2: (formData.get("refRelationship2") as string) || "",
     };
 
-    // Generate PDF
-    const pdfBytes = await generateApplicationPDF(applicationData);
-
-    // Build attachments
-    const attachments: Array<{ filename: string; content: string }> = [
-      {
-        filename: `application-${fullName.replace(/\s+/g, "-").toLowerCase()}.pdf`,
-        content: uint8ArrayToBase64(pdfBytes),
-      },
-    ];
-
-    if (resumeFile && resumeFile.size > 0) {
-      const resumeBuffer = await resumeFile.arrayBuffer();
-      attachments.push({
-        filename: `resume-${fullName.replace(/\s+/g, "-").toLowerCase()}.pdf`,
-        content: uint8ArrayToBase64(new Uint8Array(resumeBuffer)),
-      });
-    }
-
     // Format position name for display
     const positionTitle = position
       .split("-")
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(" ");
 
-    // Send notification email to owners
-    const emailResult = await sendNotificationEmail(
-      applicationData,
-      positionTitle,
-      attachments,
-      env.RESEND_API_KEY
-    );
+    // Generate PDF and read resume in parallel
+    const [pdfBytes, resumeBuffer] = await Promise.all([
+      generateApplicationPDF(applicationData, positionTitle),
+      resumeFile && resumeFile.size > 0 ? resumeFile.arrayBuffer() : Promise.resolve(null),
+    ]);
+
+    // Build attachments
+    const safeName = fullName.replace(/\s+/g, "-").toLowerCase();
+    const attachments: Array<{ filename: string; content: string }> = [
+      {
+        filename: `application-${safeName}.pdf`,
+        content: uint8ArrayToBase64(pdfBytes),
+      },
+    ];
+
+    if (resumeBuffer) {
+      const ext = resumeFile!.name.substring(resumeFile!.name.lastIndexOf(".")) || ".pdf";
+      attachments.push({
+        filename: `resume-${safeName}${ext}`,
+        content: uint8ArrayToBase64(new Uint8Array(resumeBuffer)),
+      });
+    }
+
+    // Send notification and confirmation emails in parallel
+    const [emailResult] = await Promise.all([
+      sendNotificationEmail(applicationData, positionTitle, attachments, env.RESEND_API_KEY),
+      sendConfirmationEmail(fullName, email, positionTitle, env.RESEND_API_KEY),
+    ]);
 
     if (!emailResult.success) {
       console.error("Failed to send notification email:", emailResult.error);
       return Response.json(
         { success: false, error: "Failed to submit application. Please try again later." },
-        { status: 500, headers: CORS_HEADERS }
+        { status: 500, headers: getCorsHeaders(request) }
       );
     }
 
-    // Send confirmation email to applicant
-    await sendConfirmationEmail(fullName, email, positionTitle, env.RESEND_API_KEY);
-
     return Response.json(
       { success: true, message: "Application submitted successfully!" },
-      { status: 200, headers: CORS_HEADERS }
+      { status: 200, headers: getCorsHeaders(request) }
     );
   } catch (error) {
     const errMsg = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
@@ -226,7 +247,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
     return Response.json(
       { success: false, error: "An unexpected error occurred. Please try again." },
-      { status: 500, headers: CORS_HEADERS }
+      { status: 500, headers: getCorsHeaders(request) }
     );
   }
 };
@@ -308,7 +329,7 @@ function formatDate(dateStr: string): string {
   return dateStr;
 }
 
-async function generateApplicationPDF(data: ApplicationData): Promise<Uint8Array> {
+async function generateApplicationPDF(data: ApplicationData, positionTitle: string): Promise<Uint8Array> {
   const doc = await PDFDocument.create();
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const boldFont = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -377,11 +398,6 @@ async function generateApplicationPDF(data: ApplicationData): Promise<Uint8Array
   y -= 20;
   page.drawText("Employment Application", { x: margin, y, size: 14, font, color: gray });
   y -= 12;
-
-  const positionTitle = data.position
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
 
   // Position
   drawSectionHeader("Position");
@@ -478,23 +494,27 @@ async function sendNotificationEmail(
   attachments: Array<{ filename: string; content: string }>,
   apiKey: string
 ): Promise<{ success: boolean; error?: string }> {
-  const scheduleText = data.schedule.length > 0 ? data.schedule.join(", ") : "Not specified";
+  const scheduleText = data.schedule.length > 0 ? escapeHtml(data.schedule.join(", ")) : "Not specified";
   const addressParts = [data.streetAddress, data.city, data.state, data.zip].filter(Boolean);
-  const addressText = addressParts.length > 0 ? addressParts.join(", ") : "Not provided";
+  const addressText = addressParts.length > 0 ? escapeHtml(addressParts.join(", ")) : "Not provided";
+  const safeName = escapeHtml(data.fullName);
+  const safeEmail = escapeHtml(data.email);
+  const safePhone = escapeHtml(data.phone);
+  const safePosition = escapeHtml(positionTitle);
 
   const htmlBody = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2 style="color: #333; border-bottom: 2px solid #333; padding-bottom: 8px;">
-        New Job Application: ${positionTitle}
+        New Job Application: ${safePosition}
       </h2>
 
       <h3 style="color: #333;">Applicant Information</h3>
       <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-        <tr><td style="padding: 4px 8px; font-weight: bold; color: #666; width: 120px;">Name</td><td style="padding: 4px 8px;">${data.fullName}</td></tr>
-        <tr><td style="padding: 4px 8px; font-weight: bold; color: #666;">Email</td><td style="padding: 4px 8px;"><a href="mailto:${data.email}">${data.email}</a></td></tr>
-        <tr><td style="padding: 4px 8px; font-weight: bold; color: #666;">Phone</td><td style="padding: 4px 8px;"><a href="tel:${data.phone}">${data.phone}</a></td></tr>
+        <tr><td style="padding: 4px 8px; font-weight: bold; color: #666; width: 120px;">Name</td><td style="padding: 4px 8px;">${safeName}</td></tr>
+        <tr><td style="padding: 4px 8px; font-weight: bold; color: #666;">Email</td><td style="padding: 4px 8px;"><a href="mailto:${safeEmail}">${safeEmail}</a></td></tr>
+        <tr><td style="padding: 4px 8px; font-weight: bold; color: #666;">Phone</td><td style="padding: 4px 8px;"><a href="tel:${safePhone}">${safePhone}</a></td></tr>
         <tr><td style="padding: 4px 8px; font-weight: bold; color: #666;">Address</td><td style="padding: 4px 8px;">${addressText}</td></tr>
-        <tr><td style="padding: 4px 8px; font-weight: bold; color: #666;">Start Date</td><td style="padding: 4px 8px;">${data.startDate || "Not specified"}</td></tr>
+        <tr><td style="padding: 4px 8px; font-weight: bold; color: #666;">Start Date</td><td style="padding: 4px 8px;">${escapeHtml(data.startDate) || "Not specified"}</td></tr>
         <tr><td style="padding: 4px 8px; font-weight: bold; color: #666;">Schedule</td><td style="padding: 4px 8px;">${scheduleText}</td></tr>
         ${data.ageConfirmation === "yes" ? '<tr><td style="padding: 4px 8px; font-weight: bold; color: #666;">Age Verified</td><td style="padding: 4px 8px;">Yes</td></tr>' : ""}
       </table>
@@ -516,7 +536,7 @@ async function sendNotificationEmail(
       from: EMAIL_CONFIG.from,
       to: EMAIL_CONFIG.to,
       reply_to: data.email,
-      subject: `${EMAIL_CONFIG.subject}: ${data.fullName} — ${positionTitle}`,
+      subject: `${EMAIL_CONFIG.subject}: ${data.fullName} — ${positionTitle}`,  // plain text subject, no HTML escaping needed
       html: htmlBody,
       attachments,
     }),
@@ -544,8 +564,8 @@ async function sendConfirmationEmail(
     const htmlBody = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #333;">Thank You for Your Application</h2>
-        <p>Dear ${name},</p>
-        <p>Thank you for applying for the <strong>${positionTitle}</strong> position at Valiant Vineyards Winery & Distillery. We have received your application and will review it shortly.</p>
+        <p>Dear ${escapeHtml(name)},</p>
+        <p>Thank you for applying for the <strong>${escapeHtml(positionTitle)}</strong> position at Valiant Vineyards Winery & Distillery. We have received your application and will review it shortly.</p>
         <p>If your qualifications match our needs, we will be in touch to schedule an interview. In the meantime, feel free to reach out if you have any questions.</p>
         <p style="margin-top: 16px; padding: 12px; background-color: #f5f5f5; border-radius: 4px; font-size: 14px; color: #555;">
           <strong>Contact Us</strong><br />

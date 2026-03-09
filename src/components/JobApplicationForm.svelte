@@ -101,14 +101,10 @@
     { value: "12", label: "December" },
   ];
 
-  function yearOptions(): string[] {
+  const YEAR_OPTIONS: string[] = (() => {
     const current = new Date().getFullYear();
-    const years: string[] = [];
-    for (let y = current + 1; y >= current - 50; y--) {
-      years.push(String(y));
-    }
-    return years;
-  }
+    return Array.from({ length: 52 }, (_, i) => String(current + 1 - i));
+  })();
 
   function formatMonthYear(month: string, year: string): string {
     if (!year) return "";
@@ -459,21 +455,13 @@
 
       if (result.success) {
         submitResult = { success: true, message: "Your application has been submitted successfully! We'll be in touch soon." };
-        // Reset Turnstile
-        turnstileToken = "";
-        if (window.turnstile) {
-          window.turnstile.reset();
-        }
       } else {
         submitResult = { success: false, message: result.error || "Something went wrong. Please try again." };
-        // Reset Turnstile so the user gets a fresh token for retry
-        turnstileToken = "";
-        if (window.turnstile) window.turnstile.reset();
       }
+      resetTurnstile();
     } catch {
       submitResult = { success: false, message: "Failed to submit application. Please try again." };
-      turnstileToken = "";
-      if (window.turnstile) window.turnstile.reset();
+      resetTurnstile();
     }
 
     submitting = false;
@@ -484,6 +472,11 @@
   // ── Turnstile Rendering ──────────────────────────────────────────
   let turnstileToken = $state("");
   let turnstileRendered = $state(false);
+
+  function resetTurnstile() {
+    turnstileToken = "";
+    if (window.turnstile) window.turnstile.reset();
+  }
 
   function renderTurnstile() {
     const container = document.querySelector(".cf-turnstile");
@@ -511,7 +504,8 @@
   $effect(() => {
     if (currentStep === 4) {
       // Small delay to let DOM render
-      setTimeout(renderTurnstile, 100);
+      const id = setTimeout(renderTurnstile, 100);
+      return () => clearTimeout(id);
     } else if (turnstileRendered) {
       // Reset when navigating away so it re-renders when returning
       turnstileRendered = false;
@@ -870,7 +864,7 @@
                           </select>
                           <select id="jobStartYear{i+1}" bind:value={job.jobStartYear} class="form-select">
                             <option value="">Year</option>
-                            {#each yearOptions() as y}
+                            {#each YEAR_OPTIONS as y}
                               <option value={y}>{y}</option>
                             {/each}
                           </select>
@@ -888,7 +882,7 @@
                             </select>
                             <select id="jobEndYear{i+1}" bind:value={job.jobEndYear} class="form-select">
                               <option value="">Year</option>
-                              {#each yearOptions() as y}
+                              {#each YEAR_OPTIONS as y}
                                 <option value={y}>{y}</option>
                               {/each}
                             </select>
