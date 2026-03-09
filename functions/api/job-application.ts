@@ -281,8 +281,17 @@ interface ApplicationData {
 }
 
 function formatDate(dateStr: string): string {
-  const [year, month, day] = dateStr.split("-");
-  return `${month}-${day}-${year}`;
+  const parts = dateStr.split("-");
+  if (parts.length === 3) {
+    const [year, month, day] = parts;
+    return `${month}-${day}-${year}`;
+  }
+  if (parts.length === 2) {
+    const [year, month] = parts;
+    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    return `${monthNames[parseInt(month, 10) - 1]} ${year}`;
+  }
+  return dateStr;
 }
 
 async function generateApplicationPDF(data: ApplicationData): Promise<Uint8Array> {
