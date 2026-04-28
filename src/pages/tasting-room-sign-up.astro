@@ -16,6 +16,7 @@ import logo from "../assets/logos/logo-dark.svg";
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
     <link rel="manifest" href="/favicon/site.webmanifest" />
     <title>Newsletter Sign Up | Valiant Vineyards</title>
+    <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   </head>
   <body class="min-h-screen flex flex-col bg-secondary text-secondary-foreground">
     <main class="flex-1 flex items-center justify-center p-6">
@@ -35,6 +36,7 @@ import logo from "../assets/logos/logo-dark.svg";
           method="POST"
           class="space-y-4"
         >
+          <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
           <label for="signup-email" class="sr-only">Email address</label>
           <input
             id="signup-email"
@@ -52,6 +54,7 @@ import logo from "../assets/logos/logo-dark.svg";
           >
             Subscribe
           </button>
+          <div class="cf-turnstile flex justify-center" data-sitekey="0x4AAAAAACHr1kbpPYRV4EtW" data-size="invisible" aria-label="Security verification"></div>
         </form>
 
         <div id="message" class="mt-6 hidden" aria-live="polite" aria-atomic="true">
@@ -73,21 +76,38 @@ import logo from "../assets/logos/logo-dark.svg";
   const messageContainer = document.getElementById('message') as HTMLElement;
   const messageText = document.getElementById('message-text') as HTMLElement;
 
+  function waitForTurnstileToken(timeoutMs = 5000): Promise<string | null> {
+    return new Promise((resolve) => {
+      const start = Date.now();
+      const tick = () => {
+        const tokenInput = form?.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement | null;
+        if (tokenInput?.value) return resolve(tokenInput.value);
+        if (Date.now() - start >= timeoutMs) return resolve(null);
+        setTimeout(tick, 100);
+      };
+      tick();
+    });
+  }
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const emailInput = form.querySelector('input[name="EMAIL"]') as HTMLInputElement;
     const email = emailInput.value;
+    const honeypot = (form.querySelector('input[name="website"]') as HTMLInputElement | null)?.value || '';
     const button = form.querySelector('button') as HTMLButtonElement;
     const originalText = button.textContent;
 
-    // Disable button during submission
     button.disabled = true;
     button.textContent = 'Subscribing...';
+
+    const token = await waitForTurnstileToken();
 
     try {
       const formData = new FormData();
       formData.append('email', email);
+      formData.append('website', honeypot);
+      if (token) formData.append('cf-turnstile-response', token);
 
       const response = await fetch('/api/subscribe', {
         method: 'POST',
@@ -96,16 +116,17 @@ import logo from "../assets/logos/logo-dark.svg";
 
       const result = await response.json();
 
-      // Show message
       messageContainer.classList.remove('hidden');
       messageText.classList.remove('text-green-400', 'text-red-400');
+
+      const ts = (window as unknown as { turnstile?: { reset: () => void } }).turnstile;
 
       if (result.success) {
         messageText.classList.add('text-green-400');
         messageText.textContent = 'Thank you for subscribing!';
         form.reset();
+        if (ts) ts.reset();
 
-        // Auto-reset page after 3 seconds for next person
         setTimeout(() => {
           messageContainer.classList.add('hidden');
           emailInput.focus();
@@ -113,8 +134,8 @@ import logo from "../assets/logos/logo-dark.svg";
       } else {
         messageText.classList.add('text-red-400');
         messageText.textContent = result.error || 'Something went wrong. Please try again.';
+        if (ts) ts.reset();
 
-        // Auto-hide error after 4 seconds
         setTimeout(() => {
           messageContainer.classList.add('hidden');
         }, 4000);
@@ -130,7 +151,6 @@ import logo from "../assets/logos/logo-dark.svg";
       }, 4000);
     }
 
-    // Re-enable button
     button.disabled = false;
     button.textContent = originalText;
   });
