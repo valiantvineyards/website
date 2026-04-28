@@ -86,7 +86,7 @@ const ogImageURL = new URL(image, Astro.site);
         text={announcement.text}
         link={announcement.link}
         linkText={announcement.linkText}
-        client:load
+        client:idle
       />
     )}
     <Header />
