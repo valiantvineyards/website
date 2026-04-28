@@ -25,6 +25,21 @@ interface FormData {
   "cf-turnstile-response"?: string;
 }
 
+const ALLOWED_ORIGINS = [
+  "https://www.valiantvineyards.us",
+  "https://valiantvineyards.us",
+];
+
+function getCorsHeaders(request: Request): Record<string, string> {
+  const origin = request.headers.get("Origin") || "";
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
+
 // Email configuration
 const EMAIL_CONFIG = {
   from: "Valiant Vineyards Winery & Distillery <noreply@valiantvineyards.us>",
@@ -39,24 +54,27 @@ const MAILCHIMP_CONFIG = {
   dataCenter: "us21",
 };
 
+export const onRequestOptions: PagesFunction<Env> = async (context) => {
+  return new Response(null, { headers: getCorsHeaders(context.request) });
+};
+
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
-
-  // CORS headers for the response
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-
-  // Handle preflight requests
-  if (request.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+  const corsHeaders = getCorsHeaders(request);
 
   try {
     // Parse form data
     const formData = await request.formData();
+
+    // Honeypot — silently succeed for bots that filled it
+    const honeypot = formData.get("website") as string;
+    if (honeypot) {
+      return Response.json(
+        { success: true, message: "Message sent successfully!" },
+        { status: 200, headers: corsHeaders }
+      );
+    }
+
     const data: FormData = {
       name: formData.get("name") as string,
       email: formData.get("email") as string,

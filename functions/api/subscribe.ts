@@ -1,34 +1,55 @@
 interface Env {
   MAILCHIMP_API_KEY: string;
+  TURNSTILE_SECRET_KEY: string;
 }
 
-// Mailchimp configuration (same as contact.ts)
+interface TurnstileResponse {
+  success: boolean;
+  "error-codes"?: string[];
+}
+
 const MAILCHIMP_CONFIG = {
   listId: "b25550092c",
   dataCenter: "us21",
 };
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const { request, env } = context;
+const ALLOWED_ORIGINS = [
+  "https://www.valiantvineyards.us",
+  "https://valiantvineyards.us",
+];
 
-  // CORS headers for the response
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
+function getCorsHeaders(request: Request): Record<string, string> {
+  const origin = request.headers.get("Origin") || "";
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   };
+}
 
-  // Handle preflight requests
-  if (request.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+export const onRequestOptions: PagesFunction<Env> = async (context) => {
+  return new Response(null, { headers: getCorsHeaders(context.request) });
+};
+
+export const onRequestPost: PagesFunction<Env> = async (context) => {
+  const { request, env } = context;
+  const corsHeaders = getCorsHeaders(request);
 
   try {
-    // Parse form data
     const formData = await request.formData();
-    const email = formData.get("email") as string;
 
-    // Validate email
+    // Honeypot — silently succeed for bots that filled it
+    const honeypot = formData.get("website") as string;
+    if (honeypot) {
+      return Response.json(
+        { success: true, message: "Thanks for subscribing!" },
+        { status: 200, headers: corsHeaders }
+      );
+    }
+
+    const email = (formData.get("email") || formData.get("EMAIL")) as string;
+
     if (!email) {
       return Response.json(
         { success: false, error: "Please enter your email address." },
@@ -44,7 +65,28 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       );
     }
 
-    // Subscribe to Mailchimp
+    // Verify Turnstile
+    const turnstileToken = formData.get("cf-turnstile-response") as string;
+    if (!turnstileToken) {
+      return Response.json(
+        { success: false, error: "Please complete the security check." },
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    const turnstileResult = await verifyTurnstile(
+      turnstileToken,
+      env.TURNSTILE_SECRET_KEY,
+      request.headers.get("CF-Connecting-IP") || ""
+    );
+
+    if (!turnstileResult.success) {
+      return Response.json(
+        { success: false, error: "Security verification failed. Please try again." },
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
     const result = await subscribeToMailchimp(email, env.MAILCHIMP_API_KEY);
 
     if (!result.success) {
@@ -67,6 +109,33 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 };
 
+async function verifyTurnstile(
+  token: string,
+  secretKey: string,
+  remoteIp: string
+): Promise<{ success: boolean }> {
+  const response = await fetch(
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        secret: secretKey,
+        response: token,
+        remoteip: remoteIp,
+      }),
+    }
+  );
+
+  try {
+    const result = (await response.json()) as TurnstileResponse;
+    return { success: result.success };
+  } catch {
+    console.error("Turnstile response parsing failed:", response.status, response.statusText);
+    return { success: false };
+  }
+}
+
 async function subscribeToMailchimp(
   email: string,
   apiKey: string
@@ -88,12 +157,10 @@ async function subscribeToMailchimp(
   if (!response.ok) {
     const errorData = (await response.json()) as { title?: string; detail?: string };
 
-    // "Member Exists" is not an error - user is already subscribed
     if (errorData.title === "Member Exists") {
       return { success: true };
     }
 
-    // Provide user-friendly error messages
     if (errorData.title === "Invalid Resource") {
       return { success: false, error: "Please enter a valid email address." };
     }
