@@ -59,6 +59,16 @@ Sorting: pinned items first, then by date (events use `eventDate` with `date` fa
 **Events**: Copy `src/content/events/0-TEMPLATE.mdx`, rename, update frontmatter
 **Stories**: Copy `src/content/stories/0-TEMPLATE.mdx`, rename, update frontmatter
 
+## Updating the Banquet Menu
+
+The banquet menu PDF refreshes ~2× per year. The filename is intentionally versionless so updates require no code changes.
+
+1. Replace `public/downloads/banquet-menu.pdf` with the new PDF (same filename).
+2. Commit on a feature branch, open a PR, merge.
+3. Cloudflare Pages will redeploy automatically. Previously shared links keep working.
+
+Linked from `src/pages/weddings.astro` and `src/pages/private-events.astro` — do not rename the file.
+
 ## Environment Variables
 
 Required in Cloudflare Pages dashboard:
