@@ -6,13 +6,13 @@
 export const hours = {
   // Regular tasting room hours
   tastingRoom: [
-    { days: "Monday", hours: "Closed" },
-    { days: "Tuesday", hours: "Closed" },
-    { days: "Wednesday", hours: "Closed" },
-    { days: "Thursday", hours: "Closed" },
-    { days: "Friday", hours: "12 PM - 5 PM" },
-    { days: "Saturday", hours: "12 PM - 5 PM" },
-    { days: "Sunday", hours: "12 PM - 4 PM" },
+    { days: "Monday", hours: "12 PM - 5 PM" },
+    { days: "Tuesday", hours: "12 PM - 5 PM" },
+    { days: "Wednesday", hours: "12 PM - 5 PM" },
+    { days: "Thursday", hours: "12 PM - 5 PM" },
+    { days: "Friday", hours: "12 PM - 6 PM" },
+    { days: "Saturday", hours: "11 AM - 6 PM" },
+    { days: "Sunday", hours: "11 AM - 5 PM" },
   ],
   // Optional: Add seasonal notes or closures
   note: "", // e.g., "Closed Thanksgiving & Christmas"
