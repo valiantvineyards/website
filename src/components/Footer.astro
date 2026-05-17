@@ -58,6 +58,7 @@ const footerLinks = {
             method="POST"
             class="flex flex-col gap-3 sm:flex-row"
           >
+            <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
             <label for="footer-newsletter-email" class="sr-only">Email address for newsletter</label>
             <input
               id="footer-newsletter-email"
@@ -75,6 +76,7 @@ const footerLinks = {
             >
               Subscribe
             </button>
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAACHr1kbpPYRV4EtW" data-size="invisible" aria-label="Security verification"></div>
           </form>
           <p id="newsletter-message" class="mt-4 text-sm hidden wrap-break-word" aria-live="polite" aria-atomic="true"></p>
         </div>
@@ -212,22 +214,53 @@ const footerLinks = {
 <script>
   const form = document.getElementById('newsletter-form') as HTMLFormElement;
   const message = document.getElementById('newsletter-message') as HTMLElement;
+  const emailInput = form?.querySelector('input[name="EMAIL"]') as HTMLInputElement | null;
+
+  const TURNSTILE_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+
+  function ensureTurnstileScript() {
+    if (document.querySelector('script[src*="challenges.cloudflare.com/turnstile/v0/api.js"]')) return;
+    const s = document.createElement('script');
+    s.src = TURNSTILE_SRC;
+    s.async = true;
+    s.defer = true;
+    document.head.appendChild(s);
+  }
+
+  function waitForTurnstileToken(timeoutMs = 5000): Promise<string | null> {
+    return new Promise((resolve) => {
+      const start = Date.now();
+      const tick = () => {
+        const tokenInput = form?.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement | null;
+        if (tokenInput?.value) return resolve(tokenInput.value);
+        if (Date.now() - start >= timeoutMs) return resolve(null);
+        setTimeout(tick, 100);
+      };
+      tick();
+    });
+  }
+
+  emailInput?.addEventListener('focus', ensureTurnstileScript, { once: true });
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const emailInput = form.querySelector('input[name="EMAIL"]') as HTMLInputElement;
-    const email = emailInput.value;
+    const email = emailInput?.value || '';
+    const honeypot = (form.querySelector('input[name="website"]') as HTMLInputElement | null)?.value || '';
     const button = form.querySelector('button') as HTMLButtonElement;
     const originalText = button.textContent;
 
-    // Disable button during submission
     button.disabled = true;
     button.textContent = 'Subscribing...';
+
+    ensureTurnstileScript();
+    const token = await waitForTurnstileToken();
 
     try {
       const formData = new FormData();
       formData.append('email', email);
+      formData.append('website', honeypot);
+      if (token) formData.append('cf-turnstile-response', token);
 
       const response = await fetch('/api/subscribe', {
         method: 'POST',
@@ -236,16 +269,19 @@ const footerLinks = {
 
       const result = await response.json();
 
-      // Show message
       message.classList.remove('hidden', 'text-green-400', 'text-red-400');
 
       if (result.success) {
         message.classList.add('text-green-400');
         message.textContent = 'Thanks for subscribing! We\'ll keep you updated on news and events.';
         form.reset();
+        const ts = (window as unknown as { turnstile?: { reset: () => void } }).turnstile;
+        if (ts) ts.reset();
       } else {
         message.classList.add('text-red-400');
         message.textContent = result.error || 'Something went wrong. Please try again.';
+        const ts = (window as unknown as { turnstile?: { reset: () => void } }).turnstile;
+        if (ts) ts.reset();
       }
     } catch (error) {
       message.classList.remove('hidden', 'text-green-400', 'text-red-400');
@@ -253,11 +289,9 @@ const footerLinks = {
       message.textContent = 'Something went wrong. Please try again.';
     }
 
-    // Re-enable button
     button.disabled = false;
     button.textContent = originalText;
 
-    // Auto-hide message after 8 seconds (longer for screen reader users)
     setTimeout(() => {
       message.classList.add('hidden');
     }, 8000);

@@ -13,11 +13,12 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
       - name: Install and Build
         run: |
-          npm install
+          npm ci
           npm run build
         env:
           MAPBOX_ACCESS_TOKEN: ${{ secrets.MAPBOX_ACCESS_TOKEN }}

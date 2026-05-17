@@ -8,6 +8,9 @@
     "preview": "astro preview",
     "astro": "astro"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "@astrojs/mdx": "^4.3.12",
     "@astrojs/sitemap": "^3.6.0",
