@@ -3,7 +3,8 @@ import { defineConfig } from 'astro/config';
 import svelte from '@astrojs/svelte';
 import tailwindcss from '@tailwindcss/vite';
 import mdx from '@astrojs/mdx';
-import rehypeExternalLinks from './src/plugins/rehype-external-links.js';
+import { satteri } from '@astrojs/markdown-satteri';
+import externalLinks from './src/plugins/external-links.js';
 
 import sitemap from '@astrojs/sitemap';
 
@@ -15,7 +16,7 @@ export default defineConfig({
   },
   integrations: [svelte(), mdx(), sitemap()],
   markdown: {
-    rehypePlugins: [rehypeExternalLinks],
+    processor: satteri({ hastPlugins: [externalLinks] }),
   },
   output: 'static',
   vite: {

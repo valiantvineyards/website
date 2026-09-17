@@ -14,11 +14,11 @@ No test framework is configured; this is a content-focused static site.
 
 ## Tech Stack
 
-- **Astro v5** — Static site generator (output: `static`)
+- **Astro v7** — Static site generator (output: `static`)
 - **Svelte v5** — Interactive components (island architecture)
 - **Tailwind CSS v4** — Styling via Vite plugin
 - **shadcn-svelte** — UI component library (base color: stone)
-- **MDX** — Content authoring with custom rehype plugins
+- **MDX** — Content authoring with custom Sätteri (HAST) plugins
 - **Cloudflare Pages** — Hosting + serverless functions
 
 ## Architecture
@@ -52,7 +52,7 @@ Sorting: pinned items first, then by date (events use `eventDate` with `date` fa
 - `src/content.config.ts` — Content collection schemas
 - `functions/api/contact.ts` — Contact form backend
 - `src/layouts/BaseLayout.astro` — Primary page template
-- `src/plugins/rehype-external-links.js` — Opens external links in new tabs
+- `src/plugins/external-links.js` — Sätteri HAST plugin that opens external links in new tabs
 
 ## Adding Content
 

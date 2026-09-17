@@ -12,11 +12,12 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.3.12",
-    "@astrojs/sitemap": "^3.6.0",
-    "@astrojs/svelte": "^7.2.2",
+    "@astrojs/markdown-satteri": "^0.4.1",
+    "@astrojs/mdx": "^8.0.1",
+    "@astrojs/sitemap": "^3.7.4",
+    "@astrojs/svelte": "^9.0.1",
     "@tailwindcss/vite": "^4.1.17",
-    "astro": "^5.16.2",
+    "astro": "^7.3.3",
     "bits-ui": "^2.14.4",
     "clsx": "^2.1.1",
     "franc-min": "^6.2.0",
@@ -26,8 +27,7 @@
     "tailwind-merge": "^3.4.0",
     "tailwind-variants": "^3.2.2",
     "tailwindcss": "^4.1.17",
-    "typescript": "^5.9.3",
-    "unist-util-visit": "^5.0.0"
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@internationalized/date": "^3.10.0",
