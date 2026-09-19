@@ -1,0 +1,157 @@
+---
+/**
+ * Click-to-load YouTube embed.
+ *
+ * Renders an optimized poster image with a play button. YouTube's player
+ * (and its ~500 KB of script) is only loaded when the visitor clicks, and it
+ * loads from the privacy-enhanced youtube-nocookie.com domain, which is
+ * already allowed by the Content-Security-Policy in public/_headers.
+ */
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  /** The YouTube video ID, e.g. "I05qzUQyjvg" from youtu.be/I05qzUQyjvg */
+  videoId: string;
+  /** Accessible title for the player */
+  title: string;
+  poster: ImageMetadata;
+  posterAlt: string;
+  class?: string;
+}
+
+const { videoId, title, poster, posterAlt, class: className = "" } = Astro.props;
+---
+
+<div class:list={["yt-embed", className]} data-video-id={videoId} data-title={title}>
+  <button type="button" class="yt-embed-button" aria-label={`Play video: ${title}`}>
+    <Image
+      src={poster}
+      alt={posterAlt}
+      widths={[640, 960, 1280, 1920]}
+      sizes="(max-width: 768px) 100vw, 768px"
+      loading="lazy"
+      class="yt-embed-poster"
+    />
+    <span class="yt-embed-play" aria-hidden="true">
+      <svg viewBox="0 0 80 80" fill="none">
+        <circle cx="40" cy="40" r="38" />
+        <path d="M32 26v28l22-14z" fill="white" />
+      </svg>
+    </span>
+  </button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".yt-embed").forEach((el) => {
+    const button = el.querySelector("button");
+    if (!button) return;
+    button.addEventListener(
+      "click",
+      () => {
+        const iframe = document.createElement("iframe");
+        iframe.src = `https://www.youtube-nocookie.com/embed/${el.dataset.videoId}?autoplay=1&rel=0`;
+        iframe.title = el.dataset.title ?? "Video";
+        iframe.allow =
+          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+        iframe.allowFullscreen = true;
+        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+        el.replaceChildren(iframe);
+      },
+      { once: true }
+    );
+  });
+</script>
+
+<style>
+  .yt-embed {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background-color: #1a1a1a;
+  }
+
+  .yt-embed-button {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  .yt-embed-poster {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    object-fit: cover;
+    transition: transform 300ms ease;
+  }
+
+  .yt-embed-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to top, rgb(0 0 0 / 0.35), transparent 50%);
+  }
+
+  .yt-embed-play svg {
+    width: 5rem;
+    height: 5rem;
+    filter: drop-shadow(0 4px 12px rgb(0 0 0 / 0.4));
+    transition: transform 200ms ease;
+  }
+
+  .yt-embed-play circle {
+    fill: rgb(0 0 0 / 0.55);
+    stroke: white;
+    stroke-width: 2;
+    transition: fill 200ms ease;
+  }
+
+  .yt-embed-button:hover .yt-embed-poster,
+  .yt-embed-button:focus-visible .yt-embed-poster {
+    transform: scale(1.03);
+  }
+
+  .yt-embed-button:hover .yt-embed-play svg,
+  .yt-embed-button:focus-visible .yt-embed-play svg {
+    transform: scale(1.08);
+  }
+
+  .yt-embed-button:hover .yt-embed-play circle,
+  .yt-embed-button:focus-visible .yt-embed-play circle {
+    fill: var(--color-gold);
+  }
+
+  .yt-embed-button:focus-visible {
+    outline: 3px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+
+  /* The iframe is created by the script above, so it has no scoped attribute */
+  .yt-embed :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .yt-embed-poster,
+    .yt-embed-play svg {
+      transition: none;
+    }
+    .yt-embed-button:hover .yt-embed-poster {
+      transform: none;
+    }
+  }
+</style>
