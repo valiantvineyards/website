@@ -60,14 +60,14 @@ const pinnedStories = (await getCollection("stories", ({ data }) =>
     <!-- Hero image with overlaid heading -->
     <div class="relative w-full aspect-4/3 sm:aspect-video">
       <Image
-        src={heroImage}
-        alt="Dark red grapes on the vine with autumn leaves at harvest time"
+        src={heroVideoStill}
+        alt="Valiant Vineyards winery building lit at dusk, seen from above"
         widths={[640, 768, 1024]}
         sizes="100vw"
         quality={80}
         loading="eager"
         fetchpriority="high"
-        class="absolute inset-0 w-full h-full object-cover object-center"
+        class="absolute inset-0 w-full h-full object-cover object-[80%_center]"
       />
       <!-- Centered h1 on image with backdrop -->
       <div class="absolute inset-0 flex items-center justify-center px-4">
