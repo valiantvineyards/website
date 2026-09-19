@@ -6,7 +6,6 @@ import HeroImage from "../components/HeroImage.astro";
 import paintingImage from "../assets/images/painting-of-winery.webp";
 import eldonImage from "../assets/images/eldon-green-background.jpg";
 import YouTubeEmbed from "../components/YouTubeEmbed.astro";
-import filmPoster from "../assets/images/valiant-film-poster.jpg";
 ---
 
 <BaseLayout title="Our Story" description="Learn about Valiant Vineyards - our history, passion for winemaking, and commitment to crafting exceptional wines and spirits.">
@@ -45,13 +44,7 @@ import filmPoster from "../assets/images/valiant-film-poster.jpg";
 
       <!-- Short film -->
       <div class="mx-auto mt-12 max-w-4xl lg:mt-16">
-        <YouTubeEmbed
-          videoId="I05qzUQyjvg"
-          title="Valiant Vineyards Winery & Distillery"
-          poster={filmPoster}
-          posterAlt="Aerial view of the Valiant Vineyards winery at dusk, with warm light glowing from the tasting room windows."
-          class="shadow-lg"
-        />
+        <YouTubeEmbed videoId="I05qzUQyjvg" title="Valiant Vineyards Winery & Distillery" class="shadow-lg" />
         <p class="mt-4 text-center text-sm text-muted-foreground">
           Our story in under two minutes: the vineyard, the cellar, the still, and the family behind it.
         </p>
