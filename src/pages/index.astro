@@ -4,6 +4,7 @@ import Button from "../components/Button.astro";
 import { Image } from "astro:assets";
 import HeroImage from "../components/HeroImage.astro";
 import heroVideo from "../assets/videos/hero-loop.mp4";
+import heroVideoStill from "../assets/images/hero-loop-first-frame.jpg";
 import { getCollection } from "astro:content";
 import heroImage from "../assets/images/red-grapes-vineyard-sunrise.webp";
 import wineImage from "../assets/images/wine-pouring-into-glass.webp";
@@ -95,10 +96,11 @@ const pinnedStories = (await getCollection("stories", ({ data }) =>
   <!-- Desktop Hero: Original overlaid layout (hidden on mobile) -->
   <section class="relative hidden md:block">
     <div class="relative min-h-[90vh] flex items-center justify-center py-24 lg:py-32 bg-neutral-900">
-      <!-- Background image with blur-up placeholder -->
+      <!-- Still of the video's first frame, so the hand-off to the loop is
+           invisible. Also what reduced-motion visitors see. -->
       <HeroImage
-        src={heroImage}
-        alt="Dark red grapes on the vine with autumn leaves at harvest time"
+        src={heroVideoStill}
+        alt="Valiant Vineyards winery building and front gate at dusk"
         widths={[640, 1024, 1536, 2048]}
         sizes="100vw"
         quality={80}
