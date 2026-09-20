@@ -3,6 +3,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Button from "../components/Button.astro";
 import { Image } from "astro:assets";
 import HeroImage from "../components/HeroImage.astro";
+import heroVideo from "../assets/videos/hero-loop.mp4";
+import heroVideoStill from "../assets/images/hero-loop-first-frame.jpg";
 import { getCollection } from "astro:content";
 import heroImage from "../assets/images/red-grapes-vineyard-sunrise.webp";
 import wineImage from "../assets/images/wine-pouring-into-glass.webp";
@@ -58,14 +60,14 @@ const pinnedStories = (await getCollection("stories", ({ data }) =>
     <!-- Hero image with overlaid heading -->
     <div class="relative w-full aspect-4/3 sm:aspect-video">
       <Image
-        src={heroImage}
-        alt="Dark red grapes on the vine with autumn leaves at harvest time"
+        src={heroVideoStill}
+        alt="Valiant Vineyards winery building lit at dusk, seen from above"
         widths={[640, 768, 1024]}
         sizes="100vw"
         quality={80}
         loading="eager"
         fetchpriority="high"
-        class="absolute inset-0 w-full h-full object-cover object-center"
+        class="absolute inset-0 w-full h-full object-cover object-[80%_center]"
       />
       <!-- Centered h1 on image with backdrop -->
       <div class="absolute inset-0 flex items-center justify-center px-4">
@@ -94,15 +96,28 @@ const pinnedStories = (await getCollection("stories", ({ data }) =>
   <!-- Desktop Hero: Original overlaid layout (hidden on mobile) -->
   <section class="relative hidden md:block">
     <div class="relative min-h-[90vh] flex items-center justify-center py-24 lg:py-32 bg-neutral-900">
-      <!-- Background image with blur-up placeholder -->
+      <!-- Still of the video's first frame, so the hand-off to the loop is
+           invisible. Also what reduced-motion visitors see. -->
       <HeroImage
-        src={heroImage}
-        alt="Dark red grapes on the vine with autumn leaves at harvest time"
+        src={heroVideoStill}
+        alt="Valiant Vineyards winery building and front gate at dusk"
         widths={[640, 1024, 1536, 2048]}
         sizes="100vw"
         quality={80}
         position="center"
       />
+      <!-- Ambient video loop, desktop only. The still image above stays as the
+           fallback for reduced-motion, Save-Data, and while the video loads. -->
+      <video
+        class="hero-video"
+        data-src={heroVideo}
+        muted
+        loop
+        playsinline
+        preload="none"
+        aria-hidden="true"
+        tabindex="-1"
+      ></video>
       <!-- Content -->
       <div class="container relative mx-auto px-4 lg:px-8">
         <div class="mx-auto max-w-2xl text-center">
@@ -184,7 +199,7 @@ const pinnedStories = (await getCollection("stories", ({ data }) =>
             const isPastEvent = eventDate < today;
             const formattedEventDate = eventDate
               ? new Date(eventDate.getUTCFullYear(), eventDate.getUTCMonth(), eventDate.getUTCDate())
-                  .toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                  .toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" })
               : undefined;
 
             return (
@@ -419,4 +434,53 @@ const pinnedStories = (await getCollection("stories", ({ data }) =>
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    pointer-events: none;
+  }
+
+  .hero-video.is-playing {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-video {
+      display: none;
+    }
+  }
 </style>
+
+<script>
+  // Load the hero video only on desktop viewports, and only for visitors who
+  // haven't asked for reduced motion or reduced data. Mobile never downloads it.
+  const video = document.querySelector<HTMLVideoElement>(".hero-video");
+  if (video) {
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const saveData =
+      (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
+
+    const start = () => {
+      if (video.src || reducedMotion.matches || saveData) return;
+      video.addEventListener("playing", () => video.classList.add("is-playing"), { once: true });
+      video.src = video.dataset.src!;
+      video.play().catch(() => {
+        // Autoplay blocked: leave the still image in place.
+      });
+    };
+
+    if (desktop.matches) {
+      start();
+    } else {
+      desktop.addEventListener("change", (e) => e.matches && start(), { once: true });
+    }
+  }
+</script>

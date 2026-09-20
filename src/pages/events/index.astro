@@ -86,7 +86,7 @@ const posts = sortedPosts.slice(0, POSTS_PER_PAGE);
               const isPastEvent = eventDate < today;
               const formattedEventDate = eventDate
                 ? new Date(eventDate.getUTCFullYear(), eventDate.getUTCMonth(), eventDate.getUTCDate())
-                    .toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                    .toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" })
                 : undefined;
 
               return (

@@ -34,6 +34,7 @@ const {
 const image = featuredImage ?? defaultImage;
 const imageAlt = featuredImageAlt ?? title;
 const formattedDate = date.toLocaleDateString("en-US", {
+  timeZone: "UTC",
   year: "numeric",
   month: "long",
   day: "numeric",
