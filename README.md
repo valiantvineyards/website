@@ -55,9 +55,9 @@ The contact form uses:
 - **Cloudflare Pages Function** (`functions/api/contact.ts`) for form handling
 - **Resend** for transactional email delivery (template: `contact-form-submission`)
 - **Cloudflare Turnstile** for spam protection (server-side validation)
-- **Mailchimp API** for newsletter subscriptions
+- **EmailOctopus API** for newsletter subscriptions
 
-When users check "Sign me up for news and updates", the Worker adds them to the Mailchimp audience.
+When users check "Sign me up for news and updates", the Worker adds them to the EmailOctopus list (tagged `contact-form`). The footer and `/tasting-room-sign-up/` forms post to `functions/api/subscribe.ts`, tagged `website-footer` and `tasting-room`. Tags must already exist on the EmailOctopus list.
 
 ### Email Configuration
 
@@ -79,8 +79,9 @@ const EMAIL_CONFIG = {
 ### Environment Variables (Cloudflare Pages)
 
 - `RESEND_API_KEY` — Resend API key
-- `MAILCHIMP_API_KEY` — Mailchimp API key
-- `TURNSTILE_SECRET_KEY` — Cloudflare Turnstile secret key
+- `EMAILOCTOPUS_API_KEY` — EmailOctopus API key
+- `TURNSTILE_SECRET_KEY` — Cloudflare Turnstile secret key (contact and job application forms)
+- `TURNSTILE_SUBSCRIBE_SECRET_KEY` — Secret key for the invisible-mode Turnstile widget used by newsletter sign-ups
 - `MAPBOX_ACCESS_TOKEN` — Mapbox access token for the static map on the contact page (optional; falls back to a text-only address display)
 
 ### Microsoft 365 Spam Filtering
