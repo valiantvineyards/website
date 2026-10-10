@@ -75,7 +75,8 @@ Linked from `src/pages/weddings.astro` and `src/pages/private-events.astro` — 
 Required in Cloudflare Pages dashboard:
 - `RESEND_API_KEY` — Email delivery
 - `EMAILOCTOPUS_API_KEY` — Newsletter subscriptions
-- `TURNSTILE_SECRET_KEY` — CAPTCHA validation
+- `TURNSTILE_SECRET_KEY` — CAPTCHA validation (contact, job application)
+- `TURNSTILE_SUBSCRIBE_SECRET_KEY` — Invisible-mode CAPTCHA for newsletter sign-ups (`subscribe.ts`)
 - `MAPBOX_ACCESS_TOKEN` — Static map on contact page (optional)
 
 ## Git Workflow

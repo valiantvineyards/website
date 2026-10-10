@@ -1,6 +1,6 @@
 interface Env {
   EMAILOCTOPUS_API_KEY: string;
-  TURNSTILE_SECRET_KEY: string;
+  TURNSTILE_SUBSCRIBE_SECRET_KEY: string;
 }
 
 interface TurnstileResponse {
@@ -81,7 +81,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const turnstileResult = await verifyTurnstile(
       turnstileToken,
-      env.TURNSTILE_SECRET_KEY,
+      env.TURNSTILE_SUBSCRIBE_SECRET_KEY,
       request.headers.get("CF-Connecting-IP") || ""
     );
 
