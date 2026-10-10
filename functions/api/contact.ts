@@ -2,7 +2,7 @@ import { francAll } from "franc-min";
 
 interface Env {
   RESEND_API_KEY: string;
-  MAILCHIMP_API_KEY: string;
+  EMAILOCTOPUS_API_KEY: string;
   TURNSTILE_SECRET_KEY: string;
 }
 
@@ -48,10 +48,10 @@ const EMAIL_CONFIG = {
   subject: "Valiant Vineyards website message",
 };
 
-// Mailchimp configuration
-const MAILCHIMP_CONFIG = {
-  listId: "b25550092c",
-  dataCenter: "us21",
+// EmailOctopus configuration
+const EMAILOCTOPUS_CONFIG = {
+  listId: "REPLACE_WITH_LIST_ID",
+  tag: "contact-form",
 };
 
 export const onRequestOptions: PagesFunction<Env> = async (context) => {
@@ -133,7 +133,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         message_length: data.message.length,
       }));
 
-      // Send to owner only for review (not staff), skip Mailchimp
+      // Send to owner only for review (not staff), skip EmailOctopus
       await sendEmailToOwner(data, env.RESEND_API_KEY, langResult.detectedLang);
 
       return Response.json(
@@ -152,15 +152,15 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       );
     }
 
-    // Subscribe to Mailchimp if requested
+    // Subscribe to EmailOctopus if requested
     if (data.subscribe === "yes") {
-      const mailchimpResult = await subscribeToMailchimp(
+      const emailOctopusResult = await subscribeToEmailOctopus(
         data.email,
-        env.MAILCHIMP_API_KEY
+        env.EMAILOCTOPUS_API_KEY
       );
-      if (!mailchimpResult.success) {
+      if (!emailOctopusResult.success) {
         // Log but don't fail the request - email was already sent
-        console.error("Mailchimp error:", mailchimpResult.error);
+        console.error("EmailOctopus error:", emailOctopusResult.error);
       }
     }
 
@@ -236,31 +236,32 @@ async function sendEmail(
   return { success: true };
 }
 
-async function subscribeToMailchimp(
+async function subscribeToEmailOctopus(
   email: string,
   apiKey: string
 ): Promise<{ success: boolean; error?: string }> {
-  const url = `https://${MAILCHIMP_CONFIG.dataCenter}.api.mailchimp.com/3.0/lists/${MAILCHIMP_CONFIG.listId}/members`;
+  const url = `https://api.emailoctopus.com/lists/${EMAILOCTOPUS_CONFIG.listId}/contacts`;
 
   const response = await fetch(url, {
     method: "POST",
     headers: {
-      Authorization: `Basic ${btoa(`anystring:${apiKey}`)}`,
+      Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       email_address: email,
+      tags: [EMAILOCTOPUS_CONFIG.tag],
       status: "subscribed",
     }),
   });
 
   if (!response.ok) {
-    // 400 with "Member Exists" is not an error - user is already subscribed
-    const errorData = await response.json() as { title?: string };
-    if (errorData.title === "Member Exists") {
+    // 409 means the contact already exists - leave their status alone
+    if (response.status === 409) {
       return { success: true };
     }
-    return { success: false, error: JSON.stringify(errorData) };
+    const errorData = await response.text();
+    return { success: false, error: `${response.status} ${errorData}` };
   }
 
   return { success: true };

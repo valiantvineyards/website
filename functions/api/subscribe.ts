@@ -1,5 +1,5 @@
 interface Env {
-  MAILCHIMP_API_KEY: string;
+  EMAILOCTOPUS_API_KEY: string;
   TURNSTILE_SECRET_KEY: string;
 }
 
@@ -8,9 +8,14 @@ interface TurnstileResponse {
   "error-codes"?: string[];
 }
 
-const MAILCHIMP_CONFIG = {
-  listId: "b25550092c",
-  dataCenter: "us21",
+const EMAILOCTOPUS_CONFIG = {
+  listId: "REPLACE_WITH_LIST_ID",
+};
+
+// Maps the form's "source" field to an EmailOctopus tag (tags must exist on the list)
+const SOURCE_TAGS: Record<string, string> = {
+  footer: "website-footer",
+  "tasting-room": "tasting-room",
 };
 
 const ALLOWED_ORIGINS = [
@@ -87,7 +92,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       );
     }
 
-    const result = await subscribeToMailchimp(email, env.MAILCHIMP_API_KEY);
+    const source = formData.get("source") as string;
+    const tag = SOURCE_TAGS[source] ?? SOURCE_TAGS.footer;
+
+    const result = await subscribeToEmailOctopus(email, tag, env.EMAILOCTOPUS_API_KEY);
 
     if (!result.success) {
       return Response.json(
@@ -136,35 +144,44 @@ async function verifyTurnstile(
   }
 }
 
-async function subscribeToMailchimp(
+async function subscribeToEmailOctopus(
   email: string,
+  tag: string,
   apiKey: string
 ): Promise<{ success: boolean; error?: string }> {
-  const url = `https://${MAILCHIMP_CONFIG.dataCenter}.api.mailchimp.com/3.0/lists/${MAILCHIMP_CONFIG.listId}/members`;
+  const url = `https://api.emailoctopus.com/lists/${EMAILOCTOPUS_CONFIG.listId}/contacts`;
 
   const response = await fetch(url, {
     method: "POST",
     headers: {
-      Authorization: `Basic ${btoa(`anystring:${apiKey}`)}`,
+      Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       email_address: email,
+      tags: [tag],
       status: "subscribed",
     }),
   });
 
   if (!response.ok) {
-    const errorData = (await response.json()) as { title?: string; detail?: string };
-
-    if (errorData.title === "Member Exists") {
+    // 409 means the contact already exists - leave their status alone
+    if (response.status === 409) {
       return { success: true };
     }
 
-    if (errorData.title === "Invalid Resource") {
+    const errorData = (await response.json().catch(() => ({}))) as {
+      errors?: { pointer?: string }[];
+    };
+
+    if (
+      response.status === 422 &&
+      errorData.errors?.some((e) => e.pointer === "/email_address")
+    ) {
       return { success: false, error: "Please enter a valid email address." };
     }
 
+    console.error("EmailOctopus error:", response.status, JSON.stringify(errorData));
     return { success: false, error: "Unable to subscribe. Please try again later." };
   }
 

@@ -107,6 +107,7 @@ import logo from "../assets/logos/logo-dark.svg";
       const formData = new FormData();
       formData.append('email', email);
       formData.append('website', honeypot);
+      formData.append('source', 'tasting-room');
       if (token) formData.append('cf-turnstile-response', token);
 
       const response = await fetch('/api/subscribe', {

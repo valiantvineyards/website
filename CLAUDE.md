@@ -39,7 +39,8 @@ Sorting: pinned items first, then by date (events use `eventDate` with `date` fa
 ### Serverless Functions
 
 `functions/api/` contains Cloudflare Pages Functions:
-- `contact.ts` — Form handling with Resend (email), Turnstile (CAPTCHA), and Mailchimp (newsletter)
+- `contact.ts` — Form handling with Resend (email), Turnstile (CAPTCHA), and EmailOctopus (newsletter)
+- `subscribe.ts` — Footer and tasting-room sign-up forms → EmailOctopus (tagged by `source`)
 - Email recipients configured via `EMAIL_CONFIG` object in `contact.ts`
 
 ### Path Alias
@@ -73,7 +74,7 @@ Linked from `src/pages/weddings.astro` and `src/pages/private-events.astro` — 
 
 Required in Cloudflare Pages dashboard:
 - `RESEND_API_KEY` — Email delivery
-- `MAILCHIMP_API_KEY` — Newsletter subscriptions
+- `EMAILOCTOPUS_API_KEY` — Newsletter subscriptions
 - `TURNSTILE_SECRET_KEY` — CAPTCHA validation
 - `MAPBOX_ACCESS_TOKEN` — Static map on contact page (optional)
 
