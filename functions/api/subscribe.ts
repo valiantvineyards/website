@@ -9,7 +9,7 @@ interface TurnstileResponse {
 }
 
 const EMAILOCTOPUS_CONFIG = {
-  listId: "REPLACE_WITH_LIST_ID",
+  listId: "4c4ea9b4-c4e5-11f1-97cb-8de3487a8a77",
 };
 
 // Maps the form's "source" field to an EmailOctopus tag (tags must exist on the list)
