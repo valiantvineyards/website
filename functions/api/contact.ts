@@ -44,7 +44,7 @@ function getCorsHeaders(request: Request): Record<string, string> {
 const EMAIL_CONFIG = {
   from: "Valiant Vineyards Winery & Distillery <noreply@valiantvineyards.us>",
   to: ["wine@valiantvineyards.us"],
-  cc: ["sherry@valiantvineyards.us", "adrienne@valiantvineyards.us", "valiantvineyards@proton.me"],
+  cc: ["sherry@valiantvineyards.us", "valiantvineyards@proton.me"],
   subject: "Valiant Vineyards website message",
 };
 
