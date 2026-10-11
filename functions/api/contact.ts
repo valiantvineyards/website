@@ -44,7 +44,9 @@ function getCorsHeaders(request: Request): Record<string, string> {
 const EMAIL_CONFIG = {
   from: "Valiant Vineyards Winery & Distillery <noreply@valiantvineyards.us>",
   to: ["wine@valiantvineyards.us"],
-  cc: ["sherry@valiantvineyards.us", "adrienne@valiantvineyards.us", "valiantvineyards@proton.me"],
+  cc: ["sherry@valiantvineyards.us"],
+  // Site admin monitoring copy: BCC on every message, sole recipient of filtered ones
+  monitor: ["valiantvineyards@proton.me"],
   subject: "Valiant Vineyards website message",
 };
 
@@ -214,6 +216,7 @@ async function sendEmail(
       from: EMAIL_CONFIG.from,
       to: EMAIL_CONFIG.to,
       cc: EMAIL_CONFIG.cc,
+      bcc: EMAIL_CONFIG.monitor,
       reply_to: data.email,
       subject: EMAIL_CONFIG.subject,
       template: {
@@ -306,7 +309,7 @@ async function sendEmailToOwner(
     },
     body: JSON.stringify({
       from: EMAIL_CONFIG.from,
-      to: ["valiantvineyards@proton.me"],
+      to: EMAIL_CONFIG.monitor,
       reply_to: data.email,
       subject: `[Filtered: ${detectedLang}] ${EMAIL_CONFIG.subject}`,
       text: `This message was filtered as non-English (detected: ${detectedLang}).\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone || "Not provided"}\n\nMessage:\n${data.message}`,
